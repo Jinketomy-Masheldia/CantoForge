@@ -36,7 +36,11 @@
 #include "internal/dragcontroller.h"
 #include "view/iconcodes.h"
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_IOS
+#include "internal/platform/ios/iostouchcontroller.h"
+#endif
+
+#ifdef Q_OS_MACOS
 #include "internal/platform/macos/macosplatformtheme.h"
 #include "internal/windowscontroller.h"
 #elif defined(Q_OS_WIN)
@@ -77,7 +81,7 @@ void UiModule::registerExports()
     m_keyNavigationController = std::make_shared<NavigationController>(iocContext());
     m_keyNavigationUiActions = std::make_shared<NavigationUiActions>();
 
-    #ifdef Q_OS_MAC
+    #ifdef Q_OS_MACOS
     m_platformTheme = std::make_shared<MacOSPlatformTheme>();
     m_windowsController = std::make_shared<WindowsController>();
     #elif defined(Q_OS_WIN)
@@ -160,6 +164,10 @@ void UiModule::onInit(const IApplication::RunMode& mode)
     }
 
     m_keyNavigationController->init();
+#ifdef Q_OS_IOS
+    // Application-owned: one touch recognizer covers the main UI and QML dialogs.
+    new IosTouchController(qApp);
+#endif
 }
 
 void UiModule::onAllInited(const IApplication::RunMode& mode)

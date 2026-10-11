@@ -130,6 +130,62 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
+        },
+        {
+            "name": "ios-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            },
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{QT_IOS_DIR}/lib/cmake/Qt6/qt.toolchain.cmake",
+                "QT_HOST_PATH": "$env{QT_HOST_DIR}",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "17.0",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install",
+                "MUSESCORE_BUILD_CONFIGURATION": "app-ios",
+                "MUSE_APP_BUILD_MODE": "dev",
+                "MUSE_COMPILE_USE_COMPILER_CACHE": "OFF",
+                "MUE_DOWNLOAD_SOUNDFONT": "OFF"
+            }
+        },
+        {
+            "name": "ios-device",
+            "inherits": "ios-base",
+            "displayName": "iPadOS device (arm64)",
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": "iphoneos",
+                "CMAKE_OSX_ARCHITECTURES": "arm64"
+            }
+        },
+        {
+            "name": "ios-simulator",
+            "inherits": "ios-base",
+            "displayName": "iPadOS simulator (Intel Qt simulator libraries)",
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": "iphonesimulator",
+                "CMAKE_OSX_ARCHITECTURES": "x86_64"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ios-device",
+            "configurePreset": "ios-device",
+            "targets": [
+                "MuseScoreStudio"
+            ]
+        },
+        {
+            "name": "ios-simulator",
+            "configurePreset": "ios-simulator",
+            "targets": [
+                "MuseScoreStudio"
+            ]
         }
     ]
 }

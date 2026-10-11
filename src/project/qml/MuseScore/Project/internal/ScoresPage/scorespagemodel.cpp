@@ -51,7 +51,9 @@ void ScoresPageModel::openScore(const QString& scorePath, const QString& display
 
 void ScoresPageModel::openScoreManager()
 {
-    interactive()->openUrl(museScoreComService()->scoreManagerUrl());
+    const auto service = museScoreComService();
+    // The local-only iPad build has no cloud service, but the web manager is usable.
+    interactive()->openUrl(service ? service->scoreManagerUrl() : QUrl("https://musescore.com/my-scores"));
 }
 
 int ScoresPageModel::tabIndex() const

@@ -41,7 +41,7 @@ static const std::vector<GraphicsApi > ALLOWED_APIS = {
 };
 #endif
 
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
 static const std::vector<GraphicsApi > ALLOWED_APIS = {
     GraphicsApi::Metal,
     GraphicsApi::OpenGL,

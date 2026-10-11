@@ -33,7 +33,7 @@ class NavigationController;
 class NavigationUiActions;
 class WindowsController;
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 class MacOSPlatformTheme;
 #elif defined(Q_OS_WIN)
 class WindowsPlatformTheme;
@@ -66,7 +66,7 @@ private:
     std::shared_ptr<NavigationUiActions> m_keyNavigationUiActions;
     std::shared_ptr<WindowsController> m_windowsController;
 
-    #ifdef Q_OS_MAC
+    #ifdef Q_OS_MACOS
     std::shared_ptr<MacOSPlatformTheme> m_platformTheme;
     #elif defined(Q_OS_WIN)
     std::shared_ptr<WindowsPlatformTheme> m_platformTheme;

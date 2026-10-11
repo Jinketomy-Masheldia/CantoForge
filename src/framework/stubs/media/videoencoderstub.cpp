@@ -41,6 +41,11 @@ void VideoEncoderStub::finishEncode()
 {
 }
 
+bool VideoEncoderStub::encodeVideo(const muse::ByteArray&, int)
+{
+    return false;
+}
+
 bool VideoEncoderStub::addAudio(const muse::io::path_t&)
 {
     return false;

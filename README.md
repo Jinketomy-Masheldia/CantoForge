@@ -1,90 +1,105 @@
-# ![MuseScore Studio](share/icons/musescore_logo_full.png)
+# MuseScore Studio for iPad — Unofficial Port
 
-Music notation and composition software
+An experimental iPadOS port of **MuseScore Studio 4.7.5**, preserving the
+desktop interface and core notation features.
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![Coverage](https://s3.us-east-1.amazonaws.com/extensions.musescore.org/test/code_coverage/coverage_badge.svg?)](https://github.com/musescore/MuseScore/actions/workflows/check_unit_tests.yml)
+**This project is not affiliated with or endorsed by MuseScore or Muse Group.**
+It is a personal, community-oriented port of the open-source desktop Studio
+application. It is not the official MuseScore mobile application.
 
-MuseScore Studio is an open source and free music notation software. For support, contribution, and bug reports visit MuseScore.org. Fork and make pull requests!
+## Status
 
-## Features
+The port launches and is usable on the maintainer's 11-inch iPad Pro (2022,
+M2), running iPadOS 26.6 as reported by the owner. Many workflows have been
+reported usable, but there has not been a complete feature or device audit.
+Use copies of important scores while testing.
 
-- WYSIWYG design, notes are entered on a "virtual notepaper"
-- TrueType font(s) for printing & display allows for high quality scaling to all sizes
-- Easy & fast note entry
-- Many editing functions
-- MusicXML import/export
-- MIDI (SMF) import/export
-- MEI import/export
-- MuseData import
-- MIDI input for note entry
-- Integrated sequencer and software synthesizer to play the score
-- Print or create PDF files
+| Area | Current status |
+| --- | --- |
+| Desktop interface and score editor | Retained; basic use reported working on the test iPad |
+| Score creation, preferences and export dialogs | Platform fixes implemented; targeted host runtime checks passed |
+| Playback | CoreAudio output and bundled SoundFont synthesis implemented |
+| Files integration | Document import, local score storage and file sharing implemented |
+| Touch input | Single-finger canvas panning, tap selection, long-press context menus and touch-aware submenus implemented |
+| External mouse and keyboard | Desktop input retained; iPad secondary-click bridge implemented; accessory-specific behavior needs testing |
+| Text editing | Title-editing exit and popup-lifetime fixes included; broader input-method testing remains open |
+| Import and export formats | Core modules retained; every format has not been verified on iPad |
 
-## More info
+The build targets **arm64 iPads with iPadOS 17.0 or later**. This is the
+configured deployment target, not a claim that all supported OS versions or
+iPad models have been tested. Portrait layouts, multitasking, Apple Pencil,
+accessibility and larger-score performance need additional reports.
 
-- [MuseScore Homepage](https://musescore.org)
-- [MuseScore Git workflow instructions](https://musescore.org/en/developers-handbook/git-workflow)
-- [How to compile MuseScore?](https://github.com/musescore/MuseScore/wiki/Set-up-developer-environment)
+MuseSounds/MuseSampler, desktop VST plug-ins, the desktop updater, subprocess
+multiwindow support, cloud integration, automation and video export are
+disabled in the iPad configuration. Experimental MNX import/export is disabled
+by the helper script. Printing and some desktop/native dialogs remain
+unverified. Script/QML extensions are retained, but external-process APIs
+are unavailable.
 
-## License
+## Build and install
 
-MuseScore Studio is licensed under GPL version 3.0. See [license file](https://github.com/musescore/MuseScore/blob/master/LICENSE.txt) in the same directory.
+Build on macOS with Xcode, CMake, Ninja, matching Qt iOS/macOS kits, and
+HarfBuzz sources. The development build used **Qt 6.11.2** and the
+**iPhoneOS 26.5 SDK**.
 
-## Packages
+See [Build and installation instructions](docs/ios-port.md).
 
-See [Code Structure on Wiki](https://github.com/musescore/MuseScore/wiki/CodeStructure)
+The helper generates an **unsigned IPA**. Sign it with your own compatible
+sideloading workflow. Signing credentials are not included. No App Store
+release is planned for this project at present.
 
-## Building
+## Testing and feedback
 
-**Read the [Compilation section](https://github.com/musescore/MuseScore/wiki/Set-up-developer-environment) of the [MuseScore Wiki](https://github.com/musescore/MuseScore/wiki) for a complete build walkthrough and a list of dependencies.**
+- Read the [manual testing guide](docs/testing.md).
+- Report port-specific issues in **this repository's Issues tab**.
+- Include the port/bundle revision, iPad model, iPadOS version, input device,
+  reproduction steps and a minimal score where possible.
+- Logs are available through Files in the application's Documents directory.
+  Native crash reports may also be available in iPadOS Analytics Data.
 
-### Getting sources
+Do not send port-only issues to the upstream team as official Studio bugs.
+If the same problem occurs in the official desktop application, say so in
+the report so it can be assessed for upstream reporting.
 
-If using git to download repo of entire code history, type:
+## Source, licensing and releases
 
-    git clone https://github.com/musescore/MuseScore.git
-    cd MuseScore
+The `ipad-port` branch is based on upstream tag **`v4.7.5`**, commit
+`3654226c2e99289916916953a98e585a3d3b315a`, and preserves its Git history.
+It includes the iPadOS adaptations developed in October 2026. The upstream
+development branch is separate from this port; select `ipad-port` when
+browsing or cloning the iPad source.
 
-Otherwise, you can just download the latest source release tarball from the [Releases page](https://github.com/musescore/MuseScore/releases), and then from your download directory type:
+The application is licensed under **GNU GPL version 3**; see [LICENSE.txt](LICENSE.txt).
+Existing copyright notices and the upstream font exception are retained.
+Third-party libraries, fonts and SoundFonts retain their individual licenses.
+See [provenance and notices](NOTICE.md).
 
-    tar xzf MuseScore-x.x.x.tar.gz
-    cd MuseScore-x.x.x
+Public IPA release materials are still being prepared. In particular, Qt is
+statically linked: the repository's automatic source archive alone does not
+provide all corresponding dependency sources for an IPA. Follow the
+[release preparation guide](docs/releasing.md) before distributing binaries.
+This repository preparation is not a completed license audit or a public
+binary release.
 
-### Release Build
+## Contributing
 
-To compile MuseScore Studio for release, type:
+Bug reports, device testing, documentation fixes and focused patches are
+welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-    cmake -P build.cmake -DCMAKE_BUILD_TYPE=Release
+Substantial parts of the port and its documentation were developed with
+assistance from **OpenAI Codex**, using build/runtime checks and the
+maintainer's device feedback. Further human review and device testing are
+welcome; this disclosure does not imply full feature verification.
 
-If something goes wrong, append the word "clean" to the above command to delete the build subdirectory:
+## Upstream and acknowledgements
 
-    cmake -P build.cmake -DCMAKE_BUILD_TYPE=Release clean
+- [MuseScore Studio source](https://github.com/musescore/MuseScore)
+- [MuseScore.org](https://musescore.org/)
+- [Original upstream README](docs/upstream/README.md)
 
-Then try running the first command again.
-
-### Running
-
-To start MuseScore Studio, type:
-
-    cmake -P build.cmake -DCMAKE_BUILD_TYPE=Release run
-
-Or run the compiled executable directly.
-
-### Debug Build
-
-A debug version can be built and run by replacing `-DCMAKE_BUILD_TYPE=Release`
-with `-DCMAKE_BUILD_TYPE=Debug` in the above commands.
-
-If you omit the `-DCMAKE_BUILD_TYPE` option entirely then `RelWithDebInfo` is
-used by default, as it provides a useful compromise between Release and Debug.
-
-### Testing
-
-See the [Unit tests section](https://github.com/musescore/MuseScore/wiki/Unit-tests) of the [MuseScore Wiki](https://github.com/musescore/MuseScore/wiki) for instructions on how to run the test suite.
-
-### Code Formatting
-
-Run `./hooks/install.sh` to install a pre-commit hook that will format your staged files. Requires that you install `uncrustify`.
-
-If you have problems, please report them. To uninstall, run `./hooks/uninstall.sh`.
+MuseScore Studio, its contributors and the authors of Qt and the bundled
+dependencies provide the editor, engraving engine and other foundations of
+this port. The original desktop source and resource licenses are preserved.
+Project names and trademarks belong to their respective owners; the code
+license does not itself grant trademark rights.

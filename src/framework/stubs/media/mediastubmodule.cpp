@@ -23,7 +23,7 @@
 
 #include "framework/media/ivideoencoder.h"
 #include "framework/media/ivideoencoderresolver.h"
-#include "framework/media/internal/videoencoderresolver.h"
+#include "videoencoderresolverstub.h"
 #include "modularity/ioc.h"
 
 #include "videoencoderstub.h"
@@ -39,7 +39,7 @@ std::string MediaModule::moduleName() const
 void MediaModule::registerExports()
 {
     auto videoEncoderStub = std::make_shared<VideoEncoderStub>();
-    auto videoEncodeResolver = std::make_shared<VideoEncoderResolver>();
+    auto videoEncodeResolver = std::make_shared<VideoEncoderResolverStub>();
     videoEncodeResolver->setCurrentVideoEncoder(videoEncoderStub);
 
     ioc()->registerExport<IVideoEncoder>(moduleName(), videoEncoderStub);

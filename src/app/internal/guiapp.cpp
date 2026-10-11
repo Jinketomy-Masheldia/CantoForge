@@ -5,6 +5,9 @@
 #include <QQuickWindow>
 #include <QQmlContext>
 #include <QTimer>
+#ifdef Q_OS_IOS
+#include <QStandardPaths>
+#endif
 
 #include "modularity/imodulesetup.h"
 #include "modularity/ioc.h"
@@ -42,6 +45,89 @@ using namespace mu::app;
 using namespace mu::appshell;
 
 static int m_lastId = 0;
+
+#ifdef Q_OS_IOS
+static QQuickWindow* createStartupErrorWindow(QQmlApplicationEngine* engine, const QString& details)
+{
+    // Use only QtQuick here: AppShell itself may have failed to load.
+    QQmlComponent fallback(engine);
+    fallback.setData(R"qml(
+        import QtQuick
+        Window {
+            id: root
+            required property string errorMessage
+            property bool copied: false
+            width: 1000
+            height: 700
+            visibility: Window.FullScreen
+            color: "#242424"
+            title: "MuseScore Studio - Startup error"
+            function copyDiagnostics() {
+                errorText.selectAll()
+                errorText.copy()
+                root.copied = true
+            }
+            Rectangle {
+                id: copyButton
+                objectName: "copyDiagnosticsButton"
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: 24
+                width: 240
+                height: 52
+                radius: 8
+                color: "#415e91"
+                Text {
+                    anchors.centerIn: parent
+                    text: root.copied ? qsTr("Copied") : qsTr("Copy all error text")
+                    color: "white"
+                    font.pixelSize: 18
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.copyDiagnostics()
+                }
+            }
+            Flickable {
+                anchors.top: copyButton.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 24
+                clip: true
+                contentHeight: Math.max(height, errorText.implicitHeight)
+                TextEdit {
+                    id: errorText
+                    objectName: "startupErrorText"
+                    width: parent.width
+                    text: root.errorMessage
+                    textFormat: TextEdit.PlainText
+                    wrapMode: TextEdit.Wrap
+                    readOnly: true
+                    selectByMouse: true
+                    selectByKeyboard: true
+                    persistentSelection: true
+                    color: "white"
+                    font.pixelSize: 20
+                }
+            }
+        }
+    )qml", QUrl("qrc:/ios-startup-error.qml"));
+
+    const QString logPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                            + "/" + QCoreApplication::applicationName() + "/Diagnostics";
+    const QString message = QObject::tr("MuseScore Studio could not load its interface.")
+                            + "\n\n" + details + "\n\n" + QObject::tr("Logs are available in Files:")
+                            + "\n" + logPath;
+    QObject* object = fallback.createWithInitialProperties({ { "errorMessage", message } });
+    QQuickWindow* window = qobject_cast<QQuickWindow*>(object);
+    if (!window) {
+        LOGE() << "Failed to show startup error: " << fallback.errorString();
+        delete object;
+    }
+    return window;
+}
+#endif
 
 GuiApp::GuiApp(const CmdOptions& options, const modularity::ContextPtr& ctx)
     : muse::BaseApplication(ctx), m_options(options)
@@ -248,6 +334,9 @@ void GuiApp::setup()
 
     QObject::connect(engine, &QQmlApplicationEngine::objectCreated, qApp, [](QObject* obj, const QUrl&) {
         QQuickWindow* w = dynamic_cast<QQuickWindow*>(obj);
+        if (!w) {
+            return;
+        }
         //! NOTE It is important that there is a connection to this signal with an error,
         //! otherwise the default action will be performed - displaying a message and terminating.
         //! We will not be able to switch to another backend.
@@ -359,7 +448,9 @@ muse::modularity::ContextPtr GuiApp::setupNewContext()
 #endif
 
     // Load main window
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_IOS)
+    QString platform = "ios";
+#elif defined(Q_OS_MACOS)
     QString platform = "mac";
 #elif defined(Q_OS_WIN)
     QString platform = "win";
@@ -370,9 +461,16 @@ muse::modularity::ContextPtr GuiApp::setupNewContext()
     QQmlApplicationEngine* engine = muse::modularity::globalIoc()->resolve<muse::ui::IUiEngine>("app")->qmlAppEngine();
 
     QString path = QString(":/qt/qml/MuseScore/AppShell/platform/%1/Main.qml").arg(platform);
+#ifdef Q_OS_IOS
+    LOGI() << "iPad bundle revision: " << MUE_IOS_BUNDLE_VERSION;
+#endif
+    LOGI() << "Loading main QML: " << path;
     QQmlComponent component = QQmlComponent(engine, path);
     if (!component.isReady()) {
         LOGE() << "Failed to load main qml file, err: " << component.errorString();
+#ifdef Q_OS_IOS
+        m_window = createStartupErrorWindow(engine, component.errorString());
+#endif
         return nullptr;
     }
 
@@ -384,10 +482,34 @@ muse::modularity::ContextPtr GuiApp::setupNewContext()
 
     QObject* obj = component.create(qmlCtx);
     if (!obj) {
-        LOGE() << "failed Qml load\n";
+        LOGE() << "Failed to create main QML window: " << component.errorString();
+#ifdef Q_OS_IOS
+        m_window = createStartupErrorWindow(engine, component.errorString());
+#else
         QCoreApplication::exit(-1);
+#endif
+        delete qmlCtx;
         return nullptr;
     }
+
+    m_window = qobject_cast<QQuickWindow*>(obj);
+    if (!m_window) {
+        LOGE() << "Main QML root is not a window";
+        delete obj;
+        delete qmlCtx;
+#ifdef Q_OS_IOS
+        m_window = createStartupErrorWindow(engine, "Main QML root is not a window");
+#endif
+        return nullptr;
+    }
+    LOGI() << "Main QML window created";
+
+    // This window is created via QQmlComponent, so the engine's objectCreated
+    // signal above is not emitted for it.
+    QObject::connect(m_window, &QQuickWindow::sceneGraphError, qApp,
+                     [](QQuickWindow::SceneGraphError, const QString& message) {
+        LOGE() << "Main window scene graph error: " << message;
+    });
 
     startupScenario()->runOnSplashScreen();
 
@@ -403,9 +525,13 @@ muse::modularity::ContextPtr GuiApp::setupNewContext()
     // otherwise the empty window frame will be visible
     // https://github.com/musescore/MuseScore/issues/29630
     // Transparency will be removed after the page loads.
-    m_window = dynamic_cast<QQuickWindow*>(obj);
     m_window->setOpacity(0.01);
+#ifdef Q_OS_IOS
+    // Qt's iOS view controller hides the status bar for a fullscreen window.
+    m_window->showFullScreen();
+#else
     m_window->setVisible(true);
+#endif
 
     startupScenario()->runAfterSplashScreen();
 

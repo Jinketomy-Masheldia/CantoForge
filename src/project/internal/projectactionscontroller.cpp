@@ -39,6 +39,9 @@
 #include "engraving/engravingerrors.h"
 
 #include "projecterrors.h"
+#ifdef Q_OS_IOS
+#include "platform/ios/iosdocumentimport.h"
+#endif
 #include "projectextensionpoints.h"
 
 #include "log.h"
@@ -244,6 +247,14 @@ Ret ProjectActionsController::openProject(const muse::io::path_t& givenPath, con
         return make_ret(Ret::Code::UnknownError);
     }
 
+#ifdef Q_OS_IOS
+    auto imported = importIosDocument(actualPath);
+    if (!imported.ret) {
+        return imported.ret;
+    }
+    actualPath = imported.val;
+#endif
+
     //! Step 2. If the project is already open in the current window, then just switch to showing the notation
     if (isProjectOpened(actualPath)) {
         return doFinishOpenProject();
@@ -258,6 +269,11 @@ Ret ProjectActionsController::openProject(const muse::io::path_t& givenPath, con
     //! Step 4. Check, if a any project is already open in the current window,
     //! then create a new instance
     if (globalContext()->currentProject()) {
+#ifdef Q_OS_IOS
+        if (!closeOpenedProject(false)) {
+            return make_ret(Ret::Code::Cancel);
+        }
+#else
         QStringList args;
         args << actualPath.toQString();
 
@@ -267,6 +283,7 @@ Ret ProjectActionsController::openProject(const muse::io::path_t& givenPath, con
 
         multiwindowsProvider()->openNewWindow(args);
         return make_ret(Ret::Code::Ok);
+#endif
     }
 
     //! Step 5. If it's a cloud project, download the latest version
@@ -669,6 +686,11 @@ void ProjectActionsController::newProject()
     };
 
     if (globalContext()->currentProject()) {
+#ifdef Q_OS_IOS
+        if (!closeOpenedProject(false)) {
+            return;
+        }
+#else
         if (multiwindowsProvider()->isHasWindowWithoutProject()) {
             multiwindowsProvider()->activateWindowWithoutProject({ "file-new" });
             return;
@@ -677,6 +699,7 @@ void ProjectActionsController::newProject()
         args << "--session-type" << "start-with-new";
         multiwindowsProvider()->openNewWindow(args);
         return;
+#endif
     }
 
     auto promise = interactive()->open(NEW_SCORE_URI);

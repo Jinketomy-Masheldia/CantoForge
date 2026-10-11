@@ -50,10 +50,8 @@ Item {
 
     property int popupItemsCount: 18
 
-    property alias dropIcon: mainItem.dropIcon
-    property alias label: mainItem.label
-
-    property alias navigation: mainItem.navigation
+    property alias dropIcon: dropIconItem
+    property alias label: labelItem
 
     property alias isOpened: dropdownLoader.isOpened
     property alias dropdown: dropdownLoader.dropdown
@@ -114,6 +112,25 @@ Item {
         }
     }
 
+    // An owned object property is initialized before external grouped bindings.
+    // An alias through mainItem can still be null at that point in Qt 6.11.
+    property NavigationControl navigation: NavigationControl {
+        id: navCtrl
+
+        name: mainItem.objectName != "" ? mainItem.objectName : "Dropdown"
+        enabled: mainItem.enabled && mainItem.visible
+        accessible.role: MUAccessible.ComboBox
+        accessible.name: labelItem.text
+
+        onActiveChanged: {
+            if (!mainItem.activeFocus) {
+                mainItem.forceActiveFocus()
+            }
+        }
+
+        onTriggered: mainItem.clicked()
+    }
+
     Item {
         id: mainItem
 
@@ -128,23 +145,6 @@ Item {
         property color hoveredColor: backgroundItem.color
 
         property alias navigation: navCtrl
-
-        NavigationControl {
-            id: navCtrl
-
-            name: mainItem.objectName != "" ? mainItem.objectName : "Dropdown"
-            enabled: mainItem.enabled && mainItem.visible
-            accessible.role: MUAccessible.ComboBox
-            accessible.name: labelItem.text
-
-            onActiveChanged: {
-                if (!mainItem.activeFocus) {
-                    mainItem.forceActiveFocus()
-                }
-            }
-
-            onTriggered: mainItem.clicked()
-        }
 
         Rectangle {
             id: backgroundItem

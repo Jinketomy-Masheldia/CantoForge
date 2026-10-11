@@ -36,6 +36,8 @@ public:
     bool encodeImage(const QImage&) override;
     void finishEncode() override;
 
+    bool encodeVideo(const muse::ByteArray&, int = -1) override;
+
     bool addAudio(const muse::io::path_t&) override;
 };
 }

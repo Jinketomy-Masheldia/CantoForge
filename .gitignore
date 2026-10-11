@@ -83,3 +83,17 @@ __pycache__/
 /mscore/revision.h
 /share/sound/MuseScore_General*
 /VERSION
+
+# Publication and personal signing artifacts
+*.ipa
+*.p12
+*.pfx
+*.mobileprovision
+*.dSYM/
+*.xcarchive/
+/.env
+/.env.*
+!/.env.example
+/private-credentials/
+/diagnostics/
+/release-assets/

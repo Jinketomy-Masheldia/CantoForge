@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-if (OS_IS_WASM)
+if (OS_IS_WASM OR OS_IS_IOS)
     set(QT_IS_STATIC ON)
 endif()
 
@@ -93,7 +93,7 @@ message(STATUS "Qt version: ${Qt6_VERSION}")
 
 qt_standard_project_setup(REQUIRES 6.8 SUPPORTS_UP_TO 6.10)
 
-if (QT_IS_STATIC)
+if (QT_IS_STATIC AND NOT OS_IS_IOS)
     qt_add_library(all_qml_plugins STATIC)
     qt_import_qml_plugins(all_qml_plugins)
     list(APPEND QT_LIBRARIES all_qml_plugins)

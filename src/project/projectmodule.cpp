@@ -41,7 +41,7 @@
 #include "internal/notationwritersregister.h"
 #include "internal/projectrwregister.h"
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #include "internal/platform/macos/macosrecentfilescontroller.h"
 #elif defined (Q_OS_WIN)
 #include "internal/platform/windows/windowsrecentfilescontroller.h"
@@ -72,7 +72,7 @@ void ProjectModule::registerExports()
     m_convertFileToScoreService = std::make_shared<ConvertFileToScoreService>(iocContext());
     m_convertFileToScoreScenario = std::make_shared<ConvertFileToScoreScenario>(iocContext());
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     m_recentFilesController = std::make_shared<MacOSRecentFilesController>();
 #elif defined(Q_OS_WIN)
     m_recentFilesController = std::make_shared<WindowsRecentFilesController>();

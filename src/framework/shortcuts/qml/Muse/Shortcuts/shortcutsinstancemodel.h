@@ -41,7 +41,7 @@ class ShortcutsInstanceModel : public QObject, public Contextable, public async:
     Q_PROPERTY(QVariantMap shortcuts READ shortcuts NOTIFY shortcutsChanged)
     Q_PROPERTY(bool active READ active NOTIFY activeChanged)
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     QML_ANONYMOUS
 #else
     QML_ELEMENT

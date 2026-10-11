@@ -25,5 +25,5 @@ target_sources(muse_media PRIVATE
     mediastubmodule.h
     videoencoderstub.cpp
     videoencoderstub.h
-    ../../media/internal/videoencoderresolver.cpp
+    videoencoderresolverstub.h
 )

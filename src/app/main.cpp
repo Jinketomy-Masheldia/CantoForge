@@ -36,7 +36,7 @@
 
 #include "log.h"
 
-#ifndef MUSE_MODULE_DIAGNOSTICS_CRASHPAD_CLIENT
+#if !defined(MUSE_MODULE_DIAGNOSTICS_CRASHPAD_CLIENT) && !defined(Q_OS_IOS)
 static void crashCallback(int signum)
 {
     const char* signame = "UNKNOWN SIGNAME";
@@ -68,7 +68,7 @@ static void app_init_qrc()
 
 int main(int argc, char** argv)
 {
-#ifndef MUSE_MODULE_DIAGNOSTICS_CRASHPAD_CLIENT
+#if !defined(MUSE_MODULE_DIAGNOSTICS_CRASHPAD_CLIENT) && !defined(Q_OS_IOS)
     signal(SIGSEGV, crashCallback);
     signal(SIGILL, crashCallback);
     signal(SIGFPE, crashCallback);

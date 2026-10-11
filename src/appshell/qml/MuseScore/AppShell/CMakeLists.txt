@@ -108,7 +108,9 @@ qt_add_qml_module(appshell_qml
         TARGET project_qml
 )
 
-if (OS_IS_MAC)
+if (OS_IS_IOS)
+    qt_target_qml_sources(appshell_qml QML_FILES platform/ios/Main.qml)
+elseif (OS_IS_MAC)
     qt_target_qml_sources(appshell_qml 
         QML_FILES
             platform/mac/Main.qml

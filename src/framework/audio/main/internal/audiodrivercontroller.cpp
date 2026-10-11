@@ -45,6 +45,10 @@
 #endif
 #endif
 
+#ifdef Q_OS_IOS
+#include "audio/driver/platform/ios/iosaudiodriver.h"
+#endif
+
 #ifdef Q_OS_MACOS
 #include "audio/driver/platform/osx/osxaudiodriver.h"
 #endif
@@ -104,6 +108,11 @@ IAudioDriverPtr AudioDriverController::createDriver(const std::string& name) con
     return std::make_shared<AlsaAudioDriver>();
 #endif
 
+#ifdef Q_OS_IOS
+    UNUSED(name);
+    return std::make_shared<IosAudioDriver>();
+#endif
+
 #ifdef Q_OS_MACOS
     UNUSED(name);
     return std::shared_ptr<IAudioDriver>(new OSXAudioDriver());
@@ -145,7 +154,7 @@ std::vector<std::string> AudioDriverController::availableAudioApiList() const
     return names;
 #endif // Q_OS_LINUX
 
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     names.push_back("CoreAudio");
     return names;
 #endif

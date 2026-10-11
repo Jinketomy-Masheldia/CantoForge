@@ -109,6 +109,10 @@ Item {
         // because we want to ensure correct interaction between nested dialogs
         // (when opening one dialog from another)
         var obj = comp.createObject(root.provider.topWindow(), params)
+        if (!obj) {
+            console.error("Could not create dialog object: " + path + ", err: " + comp.errorString())
+            return { "ret": { "errcode": 102 } } // CreateFailed
+        }
         obj.objectId = root.provider.objectId(obj)
         root.objects[obj.objectId] = obj
 

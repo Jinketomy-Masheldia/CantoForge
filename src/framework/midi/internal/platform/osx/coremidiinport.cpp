@@ -21,8 +21,8 @@
  */
 #include "coremidiinport.h"
 
-#include <CoreAudio/HostTime.h>
-#include <CoreServices/CoreServices.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <mach/mach_time.h>
 #include <CoreMIDI/CoreMIDI.h>
 
 #include "translation.h"

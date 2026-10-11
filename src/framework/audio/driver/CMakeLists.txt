@@ -81,6 +81,14 @@ elseif(OS_IS_LIN OR OS_IS_FBSD)
         target_include_directories(muse_audio_driver PRIVATE ${JACK_INCLUDE_DIRS})
         target_link_libraries(muse_audio_driver PRIVATE ${JACK_LIBRARIES} pthread)
     endif()
+elseif(OS_IS_IOS)
+    enable_language(OBJCXX)
+    target_sources(muse_audio_driver PRIVATE platform/ios/iosaudiodriver.mm platform/ios/iosaudiodriver.h)
+    set_source_files_properties(platform/ios/iosaudiodriver.mm PROPERTIES
+        SKIP_UNITY_BUILD_INCLUSION ON SKIP_PRECOMPILE_HEADERS ON COMPILE_OPTIONS "-fobjc-arc")
+    find_library(AudioToolbox NAMES AudioToolbox REQUIRED)
+    find_library(AVFAudio NAMES AVFAudio REQUIRED)
+    target_link_libraries(muse_audio_driver PRIVATE ${AudioToolbox} ${AVFAudio})
 elseif(OS_IS_MAC)
     target_sources(muse_audio_driver PRIVATE
         platform/osx/osxaudiodriver.mm

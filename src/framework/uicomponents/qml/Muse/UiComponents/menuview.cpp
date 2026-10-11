@@ -97,6 +97,8 @@ void MenuView::componentComplete()
     m_contentItem->setObjectName(m_contentItem->objectName() + MENU_VIEW_CONTENT_OBJECT_NAME);
 
     PopupView::componentComplete();
+    // Touch menus provide immediate row feedback and selection themselves.
+    window()->setProperty("museImmediateTouch", true);
 }
 
 void MenuView::updateGeometry()

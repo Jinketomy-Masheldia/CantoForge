@@ -172,7 +172,12 @@ void GlobalModule::onPreInit(const IApplication::RunMode& mode)
     //! Log file
     io::path_t logFilePath = "none";
 #ifndef MUSE_CONFIGURATION_IS_WEB
+#ifdef Q_OS_IOS
+    // Keep device logs visible through Files / file sharing for sideloaded builds.
+    io::path_t logPath = m_configuration->userDataPath() + "/Diagnostics";
+#else
     io::path_t logPath = m_configuration->userAppDataPath() + "/logs";
+#endif
     fileSystem()->makePath(logPath);
 
     logFilePath = logPath;

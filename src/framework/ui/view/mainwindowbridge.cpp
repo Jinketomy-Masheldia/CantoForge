@@ -115,7 +115,7 @@ void MainWindowBridge::showOnBack()
 
 void MainWindowBridge::showOnFront()
 {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     // On macOS, this simple way of raising the window works just fine
     // (and the other way causes problems, since calling `show()` resizes the window if it was sized to fill the screen)
     m_window->setWindowStates(m_window->windowStates() & ~Qt::WindowMinimized);

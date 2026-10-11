@@ -21,8 +21,8 @@
  */
 #include "coremidioutport.h"
 
-#include <CoreAudio/HostTime.h>
-#include <CoreServices/CoreServices.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <mach/mach_time.h>
 #include <CoreMIDI/CoreMIDI.h>
 
 #include "translation.h"
@@ -284,7 +284,7 @@ Ret CoreMidiOutPort::sendEvent(const Event& e)
     }
 
     OSStatus result = noErr;
-    MIDITimeStamp timeStamp = AudioGetCurrentHostTime();
+    MIDITimeStamp timeStamp = mach_absolute_time();
 
     // Note: there could be three cases: MIDI2+MIDIEventList, MIDI1+MIDIEventList, MIDI1+MIDIPacketList.
     //       But we only maintain 2 code paths and may drop configuration()->useMIDI20Output() and MIDIPacketList later.

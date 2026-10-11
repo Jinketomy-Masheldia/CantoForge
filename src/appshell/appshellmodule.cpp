@@ -37,7 +37,7 @@
 #include "internal/applicationactioncontroller.h"
 #include "internal/sessionsmanager.h"
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #include "internal/platform/macos/macosappmenumodelhook.h"
 #else
 #include "internal/iappmenumodelhook.h"
@@ -65,7 +65,7 @@ void AppShellModule::registerExports()
     ioc()->registerExport<IStartupScenario>(moduleName(), new StartupScenario(iocContext()));
     ioc()->registerExport<ISessionsManager>(moduleName(), m_sessionsManager);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     ioc()->registerExport<IAppMenuModelHook>(moduleName(), std::make_shared<MacOSAppMenuModelHook>());
 #else
     ioc()->registerExport<IAppMenuModelHook>(moduleName(), std::make_shared<AppMenuModelHookStub>());

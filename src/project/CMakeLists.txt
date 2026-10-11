@@ -98,7 +98,14 @@ target_sources(project PRIVATE
     internal/projectrwregister.h
 )
 
-if (OS_IS_MAC)
+if (OS_IS_IOS)
+    enable_language(OBJCXX)
+    target_sources(project PRIVATE internal/platform/ios/iosdocumentimport.mm internal/platform/ios/iosdocumentimport.h)
+    set_source_files_properties(internal/platform/ios/iosdocumentimport.mm PROPERTIES
+        SKIP_UNITY_BUILD_INCLUSION ON SKIP_PRECOMPILE_HEADERS ON COMPILE_OPTIONS "-fobjc-arc")
+    find_library(Foundation NAMES Foundation REQUIRED)
+    target_link_libraries(project PRIVATE ${Foundation})
+elseif (OS_IS_MAC)
     target_sources(project PRIVATE
         internal/platform/macos/macosrecentfilescontroller.mm
         internal/platform/macos/macosrecentfilescontroller.h

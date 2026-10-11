@@ -24,6 +24,7 @@
 
 #include <QApplication>
 #include <QQuickWindow>
+#include <QTouchEvent>
 
 using namespace muse::uicomponents;
 
@@ -108,8 +109,16 @@ bool PopupViewCloseController::eventFilter(QObject* watched, QEvent* event)
         notifyAboutClose();
     } else if (QEvent::MouseButtonPress == event->type()) {
         doFocusOut(static_cast<QMouseEvent*>(event)->globalPosition());
+#ifdef Q_OS_IOS
+    } else if (QEvent::TouchBegin == event->type()) {
+        auto* touch = static_cast<QTouchEvent*>(event);
+        if (touch->pointCount() > 0) {
+            doFocusOut(touch->point(0).globalPosition());
+        }
+#else
     } else if (QEvent::FocusOut == event->type() && watched == popupWindow()) {
         doFocusOut(QCursor::pos());
+#endif
     } else if (QEvent::Close == event->type() && watched == popupWindow()) {
         if (!m_canClose) {
             event->ignore();

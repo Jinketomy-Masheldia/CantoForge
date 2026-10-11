@@ -44,6 +44,8 @@ MenuView {
     property alias height: content.height
 
     property string accessibleName: ""
+    property bool touchInteractionEnabled: Qt.platform.os === "ios"
+    property var touchHighlightedItem: null
 
     signal loaded()
 
@@ -129,6 +131,7 @@ MenuView {
     desiredWidth: root.menuMetrics?.itemWidth ?? 0
 
     onAboutToClose: function(closeEvent) {
+        touchHighlightedItem = null
         closeSubMenu()
     }
 
@@ -237,23 +240,35 @@ MenuView {
             var menuLoaderComponent = Qt.createComponent("../StyledMenuLoader.qml");
             root.subMenuLoader = menuLoaderComponent.createObject(root.window)
             root.subMenuLoader.menuAnchorItem = root.anchorItem
+            root.subMenuLoader.parentWindow = root.window
             root.subMenuLoader.hasSiblingMenus = root.hasSiblingMenus
+            root.subMenuLoader.touchInteractionEnabled = root.touchInteractionEnabled
 
             root.subMenuLoader.handleMenuItem.connect(function(itemId) {
                 root.handleMenuItem(itemId)
             })
 
             root.subMenuLoader.opened.connect(function(itemId) {
-                root.closePolicies = PopupView.NoAutoClose
+                // The touch close controller checks the entire transient
+                // window tree; keep outside-tap dismissal active for parents.
+                root.closePolicies = root.touchInteractionEnabled
+                        ? PopupView.CloseOnPressOutsideParent : PopupView.NoAutoClose
             })
 
             root.subMenuLoader.closed.connect(function(force) {
                 root.closePolicies = PopupView.CloseOnPressOutsideParent
+            })
 
-                if (force) {
-                    root.close(true)
-                    root.openNextMenu()
-                }
+            // Outside presses can force-close a child without leaving this
+            // menu. Only an explicit keyboard navigation request advances
+            // to another top-level menu.
+            root.subMenuLoader.openNextMenu.connect(function() {
+                root.close(true)
+                root.openNextMenu()
+            })
+            root.subMenuLoader.openPrevMenu.connect(function() {
+                root.close(true)
+                root.openPrevMenu()
             })
 
             shortcutOverrideModel.init()
@@ -515,6 +530,7 @@ MenuView {
                         padding: root.padding
 
                         subMenuShowed: root.isSubMenuOpen && root.subMenuLoader.parent === item
+                        touchHighlighted: root.touchHighlightedItem === item
 
                         onOpenSubMenuRequested: function(byHover) {
                             if (!hasSubMenu) {
@@ -525,11 +541,10 @@ MenuView {
                                 return
                             }
 
-                            if (!byHover) {
-                                if (subMenuShowed) {
-                                    root.subMenuLoader.close()
-                                    return
-                                }
+                            // Hover may have opened this submenu before the tap's
+                            // click arrives. Reopening must not toggle it closed.
+                            if (subMenuShowed) {
+                                return
                             }
 
                             root.subMenuLoader.parent = item
@@ -559,6 +574,39 @@ MenuView {
                     }
                 }
             }
+        }
+
+        MultiPointTouchArea {
+            // Keep Flickable as an ancestor so a long menu can steal a drag
+            // for scrolling. Mouse/keyboard input still uses the usual delegates.
+            parent: listView
+            anchors.fill: parent
+            z: 10000
+            enabled: root.touchInteractionEnabled
+            mouseEnabled: false
+            minimumTouchPoints: 1
+            maximumTouchPoints: 1
+            touchPoints: [TouchPoint { id: menuTouch }]
+
+            function highlightPoint() {
+                var index = listView.indexAt(menuTouch.x, menuTouch.y + listView.contentY)
+                var loader = listView.itemAtIndex(index)
+                var item = loader && !loader.isSeparator ? loader.item : null
+                root.touchHighlightedItem = item && item.enabled ? item : null
+            }
+
+            onPressed: highlightPoint()
+            onUpdated: highlightPoint()
+            onReleased: {
+                highlightPoint()
+                var item = root.touchHighlightedItem
+                root.touchHighlightedItem = null
+                if (item) {
+                    item.navigation.requestActiveByInteraction()
+                    item.clicked(null)
+                }
+            }
+            onCanceled: root.touchHighlightedItem = null
         }
     }
 }

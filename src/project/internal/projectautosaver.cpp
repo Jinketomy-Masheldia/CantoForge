@@ -21,6 +21,10 @@
  */
 #include "projectautosaver.h"
 
+#ifdef Q_OS_IOS
+#include <QGuiApplication>
+#endif
+
 #include "engraving/infrastructure/mscio.h"
 
 #include "defer.h"
@@ -54,6 +58,16 @@ void ProjectAutoSaver::init()
     configuration()->autoSaveIntervalChanged().onReceive(this, [this](int minutes) {
         m_timer.setInterval(minutes * 60000);
     });
+
+#ifdef Q_OS_IOS
+    // iPadOS can suspend/terminate the app without a desktop close event.
+    QObject::connect(qGuiApp, &QGuiApplication::applicationStateChanged, &m_timer,
+                     [this](Qt::ApplicationState state) {
+        if (state != Qt::ApplicationActive && configuration()->isAutoSaveEnabled()) {
+            onTrySave();
+        }
+    });
+#endif
 
     update();
 

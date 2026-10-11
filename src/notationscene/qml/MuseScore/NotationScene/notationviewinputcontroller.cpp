@@ -984,7 +984,12 @@ void NotationViewInputController::handleRightClick(const ClickContext& ctx)
 {
     m_mouseDownInfo.dragAction = MouseDownInfo::Nothing;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+#if defined(Q_OS_IOS)
+    // iOS pointer input does not reliably generate Qt's separate context-menu
+    // event. Open directly and suppress any duplicate native/synthetic event.
+    m_ignoreNextMouseContextMenuEvent = true;
+    m_view->showContextMenu(selectionType(), ctx.event->pos());
+#elif QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     UNUSED(ctx);
     // See also AbstractNotationPaintView::event for context menu event handling
 #else

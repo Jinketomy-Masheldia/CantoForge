@@ -104,6 +104,9 @@ Item {
         active: false
 
         function loadPopup(popupType) {
+            // Recreate the model even when switching between two elements
+            // with the same popup type while the old cleanup is pending.
+            loader.active = false
             loader.sourceComponent = prv.componentByType(popupType)
             loader.active = true
 
@@ -117,8 +120,9 @@ Item {
             })
 
             popup.closed.connect(function() {
-                loader.unloadPopup()
-                container.closed()
+                // Keep the popup and its native window alive until the close
+                // event has finished. A new popup may open before cleanup runs.
+                Qt.callLater(loader.unloadPopup, popup)
             })
 
             prv.updateContainerPosition()
@@ -141,9 +145,13 @@ Item {
             return popup
         }
 
-        function unloadPopup() {
+        function unloadPopup(closedPopup) {
+            if (!closedPopup || loader.item !== closedPopup || closedPopup.isOpened) {
+                return
+            }
             loader.active = false
             loader.sourceComponent = null
+            container.closed()
         }
     }
 

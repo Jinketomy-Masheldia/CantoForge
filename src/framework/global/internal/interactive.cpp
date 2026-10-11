@@ -32,11 +32,13 @@
 #include <QGridLayout>
 #include <QDesktopServices>
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #include "platform/macos/macosinteractivehelper.h"
 #elif defined(Q_OS_WIN)
 #include <QDir>
+#ifdef Q_OS_WIN
 #include <QProcess>
+#endif
 #include "platform/win/wininteractivehelper.h"
 #endif
 
@@ -395,6 +397,11 @@ io::path_t Interactive::selectSavingFileSync(const std::string& title, const io:
 #ifndef Q_OS_LINUX
     QFileDialog::Options options;
     options.setFlag(QFileDialog::DontConfirmOverwrite, !confirmOverwrite);
+#ifdef Q_OS_IOS
+    // The iOS native picker opens/imports documents. Use Studio's file dialog
+    // for choosing a new filename in the app's Files-visible Documents folder.
+    options.setFlag(QFileDialog::DontUseNativeDialog);
+#endif
     QString result = QFileDialog::getSaveFileName(nullptr, QString::fromStdString(title), dir.toQString(), filterToString(
                                                       filter), nullptr, options);
     return result;

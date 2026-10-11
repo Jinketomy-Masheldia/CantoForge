@@ -1,4 +1,4 @@
-# MuseScore Studio Code of Conduct
+# Unofficial iPadOS Port Code of Conduct
 
 ## Our Pledge
 
@@ -42,6 +42,6 @@ Project maintainers who do not follow or enforce the Code of Conduct in good fai
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4, available at [http://contributor-covenant.org/version/1/4][version].
 
-[contact]: https://github.com/musescore/MuseScore/wiki/Contact#contact-the-development-team
+[contact]: CONTRIBUTING.md#community-conduct
 [homepage]: http://contributor-covenant.org
 [version]: http://contributor-covenant.org/version/1/4/

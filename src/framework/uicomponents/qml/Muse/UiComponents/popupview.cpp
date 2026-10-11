@@ -23,7 +23,7 @@
 #include "popupview.h"
 #include "modularity/ioc.h"
 
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
 #include "internal/platform/macos/macospopupviewclosecontroller.h"
 #elif defined(Q_OS_WIN)
 #include "internal/platform/win/winpopupviewclosecontroller.h"
@@ -85,7 +85,7 @@ void PopupView::initView()
 void PopupView::initCloseController()
 {
     muse::modularity::ContextPtr iocCtx = muse::iocCtxForQmlObject(this)();
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
     m_closeController = new MacOSPopupViewCloseController(iocCtx);
 #elif defined(Q_OS_WIN)
     m_closeController = new WinPopupViewCloseController(iocCtx);

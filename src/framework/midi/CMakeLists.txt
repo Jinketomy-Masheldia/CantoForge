@@ -41,7 +41,7 @@ target_sources(muse_midi PRIVATE
 )
 
 include(GetPlatformInfo)
-if (OS_IS_MAC)
+if (OS_IS_MAC OR OS_IS_IOS)
     target_sources(muse_midi PRIVATE
         internal/platform/osx/coremidioutport.cpp
         internal/platform/osx/coremidioutport.h

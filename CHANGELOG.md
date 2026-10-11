@@ -1,0 +1,64 @@
+# Changelog
+
+## Unreleased — publication snapshot, 2026-10-11
+
+Based on MuseScore Studio 4.7.5. The internal iPad bundle revisions 1–10
+were personal development builds, not public release versions. No
+`v0.1.0-alpha.1` release is declared by this document.
+
+### Platform support
+
+- Added an `app-ios` configuration, arm64 iPad bundle, CMake presets and
+  command-line build/unsigned-IPA packaging helpers.
+- Preserved the desktop app shell, editor, palettes, inspector and mixer.
+- Excluded desktop-only integrations from the iPad configuration.
+- Added AudioQueue/AVAudioSession output and iOS CoreMIDI integration.
+- Bundled fonts, SoundFonts, translations, score templates and Braille tables.
+- Added security-scoped external document import into local Documents storage,
+  file sharing, single-document replacement and application-state handling.
+- Added a fullscreen app entry and status-bar hiding.
+
+### Interface and input fixes
+
+- Linked static Qt QML/style plug-ins and corrected startup module/type exports.
+- Added selectable, copyable startup interface-error diagnostics.
+- Corrected dropdown navigation/aliases used by preferences, export and score
+  creation, and guarded failed dialog/page creation.
+- Replaced the unavailable cloud score-manager path with a website fallback.
+- Added long-press context menus with progress feedback and movement cancellation.
+- Made canvas touch panning immediate after a small movement threshold while
+  preserving note-entry taps and cancelling tap actions during drags/holds.
+- Added touch menu highlighting, persistent submenus and guarded deferred cleanup.
+- Preserved the original top menu appearance and prevented finger-generated
+  hover from switching to another application menu.
+- Added an iPad secondary-pointer bridge for external mouse right clicks.
+- Sized the About dialog to its content so the existing confirmation button
+  is not clipped.
+- Deferred text-popup cleanup and the iOS input-method refresh when ending
+  score-text editing. The reported title-editing crash had no native stack;
+  wider input-method/device testing is still needed.
+- Preserved iOS fatal-signal handling so remaining crashes can generate native
+  system reports instead of exiting through the desktop fallback handler.
+
+### Publication preparation
+
+- Added English port documentation, provenance notices and a release checklist.
+- Added port-specific issue/PR templates and contribution instructions.
+- Removed inherited official release/translation/triage workflows and bot
+  configuration from this publication copy; no replacement CI is claimed.
+- Removed the early Chinese feasibility note and inherited blame-ignore hashes
+  that do not belong to this repository's imported history.
+- Preserved the upstream README separately and retained licenses/resources.
+- Based the publication branch on upstream `v4.7.5` commit
+  `3654226c2e99289916916953a98e585a3d3b315a`, retaining upstream Git history.
+- Excluded two generated liblouis headers; CMake recreates them from the
+  tracked source templates during configuration.
+
+### Verification limits
+
+The arm64 development build and IPA integrity checks passed. Targeted host
+Qt checks covered interface loading, preferences, score creation, menus,
+touch input, the About dialog and title editing. Those development probes
+were local build artifacts and are not part of the repository's test suite.
+The owner reports that many functions work on the M2 iPad. This is not a
+complete acceptance result for every feature, format, device or OS version.

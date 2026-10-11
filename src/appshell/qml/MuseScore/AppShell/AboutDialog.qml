@@ -33,7 +33,7 @@ StyledDialogView {
 
     title: qsTrc("appshell/about", "About MuseScore Studio")
 
-    contentHeight: 424
+    contentHeight: Math.max(424, aboutLayout.implicitHeight)
     contentWidth: 480
 
     AboutModel {
@@ -41,6 +41,8 @@ StyledDialogView {
     }
 
     ColumnLayout {
+        id: aboutLayout
+
         anchors.fill: parent
         spacing: 30
 

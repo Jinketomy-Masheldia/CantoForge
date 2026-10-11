@@ -37,14 +37,42 @@ endif()
 # If not MUE_COMPILE_USE_SYSTEM_HARFBUZZ, or if it was not found,
 # download and build harfbuzz
 
+set(MUE_HARFBUZZ_SOURCE_DIR "" CACHE PATH "Local HarfBuzz source tree (for offline/cross builds)")
+if(MUE_HARFBUZZ_SOURCE_DIR)
+    if(NOT EXISTS "${MUE_HARFBUZZ_SOURCE_DIR}/src/hb-ft.h")
+        message(FATAL_ERROR "MUE_HARFBUZZ_SOURCE_DIR must contain HarfBuzz sources including src/hb-ft.h")
+    endif()
+    set(HB_HAVE_FREETYPE ON CACHE BOOL "Enable HarfBuzz FreeType integration" FORCE)
+    set(HB_BUILD_UTILS OFF CACHE BOOL "Do not cross-build HarfBuzz tools" FORCE)
+    set(HB_BUILD_SUBSET OFF CACHE BOOL "Do not build HarfBuzz subset library" FORCE)
+    function(muse_add_local_harfbuzz)
+        # This is an app dependency, not an independently installed SDK.
+        set(SKIP_INSTALL_ALL ON)
+        add_subdirectory("${MUE_HARFBUZZ_SOURCE_DIR}" "${PROJECT_BINARY_DIR}/harfbuzz")
+    endfunction()
+    muse_add_local_harfbuzz()
+    set(HARFBUZZ_LIBRARIES harfbuzz)
+    set(HARFBUZZ_INCLUDE_DIRS "${MUE_HARFBUZZ_SOURCE_DIR}/src")
+    return()
+endif()
+
 set(REMOTE_ROOT_URL https://raw.githubusercontent.com/musescore/muse_deps/legacy)
 set(remote_url ${REMOTE_ROOT_URL}/harfbuzz/12.3.0)
 set(local_path ${PROJECT_BINARY_DIR}/_deps/harfbuzz)
-if (NOT EXISTS ${local_path}/harfbuzz.cmake)
+if (EXISTS ${local_path}/harfbuzz.cmake)
+    file(SIZE ${local_path}/harfbuzz.cmake harfbuzz_script_size)
+endif()
+if (NOT EXISTS ${local_path}/harfbuzz.cmake OR harfbuzz_script_size EQUAL 0)
     file(MAKE_DIRECTORY ${local_path})
     file(DOWNLOAD ${remote_url}/harfbuzz.cmake ${local_path}/harfbuzz.cmake
         HTTPHEADER "Cache-Control: no-cache"
+        STATUS download_status
     )
+    list(GET download_status 0 download_code)
+    if(NOT download_code EQUAL 0)
+        file(REMOVE ${local_path}/harfbuzz.cmake)
+        message(FATAL_ERROR "HarfBuzz download failed: ${download_status}. Set MUE_HARFBUZZ_SOURCE_DIR to a local source tree for offline builds.")
+    endif()
 endif()
 
 include(${local_path}/harfbuzz.cmake)

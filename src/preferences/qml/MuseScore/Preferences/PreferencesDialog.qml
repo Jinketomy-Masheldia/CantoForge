@@ -92,6 +92,7 @@ StyledDialogView {
             var obj = pageComponent.createObject(stack, properties)
 
             if (!Boolean(obj)) {
+                console.error("Failed to create preferences page:", pageInfo.id, pageComponent.errorString())
                 continue
             }
 
@@ -116,7 +117,9 @@ StyledDialogView {
             for (var i in pages) {
                 var page = pages[i]
                 var obj = root.prv.pagesObjects[page.id]
-                obj.reset()
+                if (obj) {
+                    obj.reset()
+                }
             }
 
             Qt.callLater(preferencesModel.resetFactorySettings)
@@ -150,6 +153,8 @@ StyledDialogView {
 
             StackLayout {
                 id: stack
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
 
@@ -182,7 +187,11 @@ StyledDialogView {
                 for (var i in pages) {
                     var page = pages[i]
                     var obj = root.prv.pagesObjects[page.id]
-                    ok &= obj.apply()
+                    if (obj) {
+                        ok &= obj.apply()
+                    } else {
+                        ok = false
+                    }
                 }
 
                 if (ok) {

@@ -63,7 +63,7 @@ void AudioConfiguration::init()
     settings()->setDefaultValue(AUDIO_API_KEY, Val("WASAPI"));
 #elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
     settings()->setDefaultValue(AUDIO_API_KEY, Val("ALSA"));
-#elif defined(Q_OS_MACOS)
+#elif defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     settings()->setDefaultValue(AUDIO_API_KEY, Val("CoreAudio"));
 #endif
     settings()->valueChanged(AUDIO_API_KEY).onReceive(nullptr, [this](const Val&) {

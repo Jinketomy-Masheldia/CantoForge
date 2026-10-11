@@ -47,6 +47,7 @@ ListItemBlank {
     property int padding: 0
 
     property bool subMenuShowed: false
+    property bool touchHighlighted: false
     property bool hasSubMenu: Boolean(modelData) && Boolean(modelData.subitems) && modelData.subitems.length > 0
     property var subMenuItems: hasSubMenu ? modelData.subitems : null
 
@@ -64,7 +65,7 @@ ListItemBlank {
     hoverHitColor: ui.theme.accentColor
     enabled: (Boolean(modelData) && modelData.enabled !== undefined) ? Boolean(modelData.enabled) : true // default true
 
-    isSelected: subMenuShowed || (itemPrv.isSelectable && itemPrv.isSelected) || navigation.highlight
+    isSelected: touchHighlighted || subMenuShowed || (itemPrv.isSelectable && itemPrv.isSelected) || navigation.highlight
 
     navigation.name: itemPrv.id ?? titleLabel.text
     navigation.accessible.role: MUAccessible.MenuItem

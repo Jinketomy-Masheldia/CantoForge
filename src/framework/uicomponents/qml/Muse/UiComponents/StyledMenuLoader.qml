@@ -42,9 +42,11 @@ Loader {
     property var placementPolicies: PopupView.Default
     property var parentWindow: null
     property bool isSearchable: false
+    property bool touchInteractionEnabled: Qt.platform.os === "ios"
     property alias isMenuOpened: loader.active
 
     property string accessibleName: ""
+    property int menuGeneration: 0
 
     QtObject {
         id: prv
@@ -53,9 +55,14 @@ Loader {
             loader.active = true
         }
 
-        function unloadMenu(force) {
+        function unloadMenu(closedMenu, generation, force) {
+            // A parent-row tap may reopen this loader before the old popup's
+            // deferred close runs. Never unload the replacement menu.
+            if (!closedMenu || loader.menu !== closedMenu || loader.menuGeneration !== generation || closedMenu.isOpened) {
+                return
+            }
             loader.active = false
-            Qt.callLater(loader.closed, force)
+            loader.closed(force)
         }
     }
 
@@ -72,6 +79,7 @@ Loader {
         placementPolicies: loader.placementPolicies
         parentWindow: loader.parentWindow
         isSearchable: loader.isSearchable
+        touchInteractionEnabled: loader.touchInteractionEnabled
 
         onHandleMenuItem: function(itemId) {
             itemMenu.close()
@@ -87,7 +95,8 @@ Loader {
         }
 
         onClosed: function(force) {
-            Qt.callLater(prv.unloadMenu, force)
+            focusOnOpenedMenuTimer.stop()
+            Qt.callLater(prv.unloadMenu, itemMenu, loader.menuGeneration, force)
         }
 
         onOpened: {
@@ -96,6 +105,7 @@ Loader {
     }
 
     function open(model, x = -1, y = -1) {
+        ++loader.menuGeneration
         prv.loadMenu()
 
         var menu = loader.menu

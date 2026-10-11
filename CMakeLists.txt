@@ -51,6 +51,7 @@ include(GetPaths)
 set(MUSESCORE_BUILD_CONFIGURATION "app" CACHE STRING "Build configuration")
 # Possible MUSESCORE_BUILD_CONFIGURATION values:
 # - app             - for desktop app
+# - app-ios         - for iPadOS (desktop Studio interface)
 # - app-portable    - for desktop portable app (Windows build for PortableApps.com)
 # - app-web         - for web app (experimental for internal use)
 # - vtest           - for visual tests (for CI)

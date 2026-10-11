@@ -54,8 +54,8 @@ ListView {
         appMenuAreaRect: Qt.rect(root.x, root.y, root.width, root.height)
         openedMenuAreaRect: openedArea(menuLoader)
 
-        onOpenMenuRequested: function(menuId) {
-            prv.openMenu(menuId)
+        onOpenMenuRequested: function(menuId, byHover) {
+            prv.openMenu(menuId, byHover)
         }
 
         onCloseOpenedMenuRequested: {
@@ -182,17 +182,34 @@ ListView {
             mouseArea: radioButtonDelegate.mouseArea
 
             highlight: radioButtonDelegate.highlight
+            border.width: Qt.platform.os === "ios" ? 0 : ui.theme.borderWidth
 
             color: radioButtonDelegate.normalColor
         }
 
         mouseArea.onHoveredChanged: {
+            if (Qt.platform.os === "ios") {
+                return
+            }
             if (!mouseArea.containsMouse) {
                 return
             }
 
-            if (menuLoader.isMenuOpened && menuLoader.parent !== this) {
+            if (menuLoader.isMenuOpened && menuLoader.parent !== radioButtonDelegate) {
                 appMenuModel.openMenu(radioButtonDelegate.menuId, true)
+            }
+        }
+
+        HoverHandler {
+            enabled: Qt.platform.os === "ios"
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                // A finger tap must not switch columns through synthesized
+                // mouse hover as popup windows appear or disappear.
+                if (hovered && menuLoader.isMenuOpened && menuLoader.parent !== radioButtonDelegate) {
+                    appMenuModel.openMenu(radioButtonDelegate.menuId, true)
+                }
             }
         }
 

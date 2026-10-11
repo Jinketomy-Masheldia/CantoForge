@@ -31,14 +31,14 @@ TopLevelDialog::TopLevelDialog(QWidget* parent)
 {
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
     setWindowFlags(Qt::Tool);
 #endif
 }
 
 bool TopLevelDialog::event(QEvent* e)
 {
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
     if (e->type() == QEvent::Show) {
         windowHandle()->setTransientParent(mainWindow()->qWindow());
     }

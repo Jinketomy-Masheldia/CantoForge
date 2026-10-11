@@ -270,12 +270,17 @@ void DockWindow::loadPage(const QString& uri, const QVariantMap& params)
 
     if (isFirstOpening) {
         async::Async::call(this, [this, notifyAboutPageLoaded]() {
+#ifdef Q_OS_IOS
+            // Keep the iPad fullscreen even when restoring desktop window geometry.
+            m_mainWindow->windowHandle()->showFullScreen();
+#else
             if (!m_hasGeometryBeenRestored
                 || (m_mainWindow->windowHandle()->windowStates() & Qt::WindowFullScreen)) {
                 //! NOTE: show window as maximized if no geometry has been restored
                 //! or if the user had closed app in FullScreen mode
                 m_mainWindow->windowHandle()->showMaximized();
             }
+#endif
 
             notifyAboutPageLoaded();
         });

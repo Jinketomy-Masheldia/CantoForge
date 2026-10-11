@@ -75,7 +75,9 @@ MasterScore::MasterScore(const muse::modularity::ContextPtr& iocCtx, std::weak_p
 
 #if defined(Q_OS_WIN)
     metaTags().insert({ u"platform", u"Microsoft Windows" });
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_IOS)
+    metaTags().insert({ u"platform", u"Apple iPadOS" });
+#elif defined(Q_OS_MACOS)
     metaTags().insert({ u"platform", u"Apple Macintosh" });
 #elif defined(Q_OS_LINUX)
     metaTags().insert({ u"platform", u"Linux" });

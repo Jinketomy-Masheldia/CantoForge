@@ -228,6 +228,9 @@ private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+#ifdef Q_OS_IOS
+    void mouseUngrabEvent() override;
+#endif
     void hoverMoveEvent(QHoverEvent* event) override;
     void hoverLeaveEvent(QHoverEvent* event) override;
     bool event(QEvent* event) override;
@@ -277,6 +280,11 @@ private:
 
     bool m_loadCalled = false;
     std::unique_ptr<NotationViewInputController> m_inputController;
+#ifdef Q_OS_IOS
+    std::unique_ptr<QMouseEvent> m_touchPress;
+    bool m_touchCanvasDrag = false;
+    QPointF m_touchDragPosition;
+#endif
     std::unique_ptr<PlaybackCursor> m_playbackCursor;
     std::unique_ptr<NoteInputCursor> m_noteInputCursor;
     std::unique_ptr<NotationRuler> m_ruler;

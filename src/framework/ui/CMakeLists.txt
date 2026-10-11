@@ -105,6 +105,20 @@ target_sources(muse_ui PRIVATE
     dev/testdialog.ui
 )
 
+if (OS_IS_IOS)
+    enable_language(OBJCXX)
+    target_sources(muse_ui PRIVATE
+        internal/platform/ios/iostouchcontroller.cpp
+        internal/platform/ios/iostouchcontroller.h
+        internal/platform/ios/iospointerbridge.mm
+        internal/platform/ios/iospointerbridge.h
+    )
+    set_source_files_properties(internal/platform/ios/iospointerbridge.mm PROPERTIES
+        SKIP_UNITY_BUILD_INCLUSION ON
+        SKIP_PRECOMPILE_HEADERS ON
+    )
+endif()
+
 if (OS_IS_MAC)
     target_sources(muse_ui PRIVATE
         internal/platform/macos/macosplatformtheme.mm

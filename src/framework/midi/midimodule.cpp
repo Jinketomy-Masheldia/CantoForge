@@ -30,7 +30,7 @@
 #elif defined(Q_OS_WIN)
 #include "internal/platform/win/winmidioutport.h"
 #include "internal/platform/win/winmidiinport.h"
-#elif defined(Q_OS_MACOS)
+#elif defined(Q_OS_MACOS) || defined(Q_OS_IOS)
 #include "internal/platform/osx/coremidioutport.h"
 #include "internal/platform/osx/coremidiinport.h"
 #else
@@ -55,7 +55,7 @@ void MidiModule::registerExports()
     #elif defined(Q_OS_WIN)
     m_midiOutPort = std::make_shared<WinMidiOutPort>();
     m_midiInPort = std::make_shared<WinMidiInPort>();
-    #elif defined(Q_OS_MACOS)
+    #elif defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     m_midiOutPort = std::make_shared<CoreMidiOutPort>();
     m_midiInPort = std::make_shared<CoreMidiInPort>();
     #else

@@ -37,7 +37,7 @@ class AlsaMidiInPort;
 #elif defined(Q_OS_WIN)
 class WinMidiOutPort;
 class WinMidiInPort;
-#elif defined(Q_OS_MACOS)
+#elif defined(Q_OS_MACOS) || defined(Q_OS_IOS)
 class CoreMidiOutPort;
 class CoreMidiInPort;
 #else
@@ -64,7 +64,7 @@ private:
     std::shared_ptr<WinMidiOutPort> m_midiOutPort;
     std::shared_ptr<WinMidiInPort> m_midiInPort;
 
-    #elif defined(Q_OS_MACOS)
+    #elif defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     std::shared_ptr<CoreMidiOutPort> m_midiOutPort;
     std::shared_ptr<CoreMidiInPort> m_midiInPort;
 

@@ -40,7 +40,13 @@ Rectangle {
     border.color: ui.theme.strokeColor
 
     function focusOnFirst() {
-        listView.itemAtIndex(0).requestActiveFocus()
+        // The list delegates may not exist until the dialog's first layout.
+        Qt.callLater(function() {
+            var item = listView.itemAtIndex(0)
+            if (item) {
+                item.requestActiveFocus()
+            }
+        })
     }
 
     NavigationPanel {

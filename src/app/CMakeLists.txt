@@ -61,6 +61,11 @@ elseif(OS_IS_LIN)
         set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${SHARED_LIBS_INSTALL_DESTINATION}")
     endif(BUILD_SHARED_LIBS)
 
+elseif(OS_IS_IOS)
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER ${MUSE_APP_GUI_IDENTIFIER})
+    set(MACOSX_BUNDLE_BUNDLE_NAME "MuseScore Studio")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${MUSE_APP_VERSION})
+    set(MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_BUILD_NUMBER})
 elseif(OS_IS_MAC)
 
     set(MACOSX_BUNDLE_GUI_IDENTIFIER ${MUSE_APP_GUI_IDENTIFIER})
@@ -243,6 +248,10 @@ qt_add_executable(MuseScoreStudio
 
 set_target_properties(MuseScoreStudio PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
 
+if(OS_IS_IOS)
+    include(${PROJECT_SOURCE_DIR}/buildscripts/packaging/iOS/SetupIosApp.cmake)
+endif()
+
 if (MUSE_ENABLE_UNIT_TESTS_CODE_COVERAGE)
     set(COVERAGE_FLAGS -fprofile-arcs -ftest-coverage --coverage)
     set(COVERAGE_LINK_FLAGS -lgcov --coverage)
@@ -298,6 +307,50 @@ target_include_directories(MuseScoreStudio PRIVATE
 ###########################################
 
 target_link_libraries(MuseScoreStudio PRIVATE ${LINK_LIB} ${COVERAGE_LINK_FLAGS})
+if(OS_IS_IOS)
+    # The executable's source directory has no QML. Scan the enabled module
+    # source directories too, otherwise Qt's scanner finds zero imports and
+    # runtime dependencies such as Controls styles and Layouts are omitted.
+    set(ios_qml_scan_roots)
+    set(ios_qml_import_paths)
+    foreach(lib IN LISTS LINK_LIB)
+        if(NOT TARGET ${lib})
+            continue()
+        endif()
+        get_target_property(module_uri ${lib} QT_QML_MODULE_URI)
+        get_target_property(module_imported ${lib} IMPORTED)
+        if(module_uri AND NOT module_imported)
+            get_target_property(module_source ${lib} SOURCE_DIR)
+            get_target_property(module_output ${lib} QT_QML_MODULE_OUTPUT_DIRECTORY)
+            list(APPEND ios_qml_scan_roots "${module_source}")
+            if(module_output)
+                string(REPLACE "." ";" uri_parts "${module_uri}")
+                foreach(part IN LISTS uri_parts)
+                    get_filename_component(module_output "${module_output}" DIRECTORY)
+                endforeach()
+                list(APPEND ios_qml_import_paths "${module_output}")
+            endif()
+        endif()
+    endforeach()
+    list(REMOVE_DUPLICATES ios_qml_scan_roots)
+    list(REMOVE_DUPLICATES ios_qml_import_paths)
+    set_target_properties(MuseScoreStudio PROPERTIES
+        QT_QML_IMPORT_SCANNER_EXTRA_ROOT_PATHS "${ios_qml_scan_roots}"
+        QT_QML_IMPORT_PATH "${ios_qml_import_paths}")
+    qt_import_qml_plugins(MuseScoreStudio)
+    get_target_property(ios_qml_plugins MuseScoreStudio LINK_LIBRARIES)
+    foreach(required_plugin Qt6::qtquickcontrols2fusionstyleplugin
+                            Qt6::qtquickcontrols2basicstyleplugin
+                            Qt6::qtquickcontrols2fusionstyleimplplugin
+                            Qt6::qtquickcontrols2basicstyleimplplugin
+                            Qt6::qquicklayoutsplugin)
+        if(NOT required_plugin IN_LIST ios_qml_plugins)
+            message(FATAL_ERROR "Missing required iPad QML plugin: ${required_plugin}")
+        endif()
+    endforeach()
+    target_compile_definitions(MuseScoreStudio PRIVATE
+        MUE_IOS_BUNDLE_VERSION="${MUE_IOS_BUNDLE_VERSION}")
+endif()
 
 if (CC_IS_EMCC)
     include(exported_functions.cmake)
@@ -412,6 +465,9 @@ elseif(OS_IS_MAC)
 ###########################################
 # Wasm
 ###########################################
+elseif(OS_IS_IOS)
+    # Qt's iOS platform plugin and QML imports are linked into the app.
+    # Resources are staged by SetupIosApp.cmake before code signing.
 elseif(OS_IS_WASM)
 
     add_custom_command(
