@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased — iPad build 19, 2026-10-12
+
+- Restored finger dragging of selected score elements and slur/tie grips without
+  panning the page. Mouse users can still press and drag an unselected element.
+- Gave score-editing drags priority over long-press context menus and preserved
+  external mouse secondary clicks.
+- Let vertical finger swipes scroll palette categories, symbol grids and Layout
+  rows. Panel reordering is mouse-only; experimental touch reorder grips and
+  previews were removed to restore the original panel appearance.
+- Retained horizontal-first touch dragging of palette symbols onto the score.
+- Removed the empty fullscreen bottom strip and deferred bottom-edge system
+  gestures to reduce accidental exits while editing.
+- Targeted host input checks and the arm64 build passed. The maintainer reports
+  the final build works well on the test iPad; broader device testing is pending.
+- These changes are on the `ipad-port` branch and are not included in the
+  existing `v0.1.0-alpha.1` binary release.
+
 ## v0.1.0-alpha.1 — 2026-10-12
 
 - First experimental CantoForge release, based on MuseScore Studio 4.7.5.

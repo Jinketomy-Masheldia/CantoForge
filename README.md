@@ -24,6 +24,11 @@ The first release is **v0.1.0-alpha.1**, an experimental pre-release.
 The port release number is separate from the upstream Studio version and the
 iPad app's bundle build number.
 
+The `ipad-port` branch also contains newer, unreleased input improvements,
+including dragging selected score elements and slur/tie grips with a finger.
+These are not included in the existing `v0.1.0-alpha.1` IPA.
+See [the changelog](CHANGELOG.md) for the current source changes.
+
 Sign and install the IPA using your own compatible sideloading workflow, such
 as SideStore or AltStore. Signing credentials are not included. No App Store
 release is planned at present.
@@ -49,7 +54,7 @@ trying this experimental port.
 | Playback | CoreAudio output with bundled MS Basic and FluidR3Mono SoundFonts |
 | Audio export | Apple AudioToolbox AAC-LC/ADTS backend; other retained desktop formats depend on the available exporters |
 | Files integration | Document import, local score storage and file sharing |
-| Touch input | Score panning, tap selection, long-press context menus and touch-aware submenus |
+| Touch input | Score panning, tap selection, selected element/grip dragging, panel scrolling, long-press context menus and touch-aware submenus; newest changes are currently source-only |
 | External mouse and keyboard | Desktop input retained, with an iPad secondary-click bridge |
 | Import/export formats | Core modules retained; every format has not been verified on iPad |
 | Languages | Upstream translations retained; new CantoForge text translated into Simplified and Traditional Chinese, with English fallback elsewhere |
@@ -63,6 +68,9 @@ Script/QML extensions are retained, but external-process APIs are unavailable.
 Portrait layouts, multitasking, Apple Pencil, accessibility, printing,
 larger-score performance and accessory-specific behavior need further testing.
 This is not a claim of complete feature or device compatibility.
+
+Panel ordering is adjusted with a mouse. On touch, vertical swipes scroll the
+panels; drag a palette symbol horizontally first to move it onto the score.
 
 ## Build from source
 
