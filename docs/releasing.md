@@ -1,91 +1,68 @@
-# Preparing a public release
+# Preparing CantoForge releases
 
-This repository preparation does not publish an IPA and is not a completed
-dependency-license audit. The application still uses development branding
-and a development bundle identifier. Keep binary releases as drafts until
-their corresponding source and notices are ready.
+CantoForge is an unofficial iPadOS port of MuseScore Studio 4.7.5. Public
+releases use the CantoForge name, the maintainer-supplied logo, and
+`com.jmx.cantoforge`. Keep upstream copyrights and component notices intact.
 
-## Source publication
+## First release
 
-- Work from `ipad-port`, based on upstream `v4.7.5` commit
-  `3654226c2e99289916916953a98e585a3d3b315a`. Publish this branch to the fork
-  and make it the default branch before announcing the iPad project. The
-  upstream development branch is a separate version and build architecture.
-- Keep `LICENSE.txt`, original file notices, dependency licenses and resource
-  attribution. State the upstream version, modification date and unofficial
-  status in README/NOTICE/CHANGELOG.
-- Review the files to be committed. Exclude build output, development IPAs,
-  personal logs and signing/account credentials.
-- The inherited official GitHub Actions, triage and translation automation
-  have been removed from this publication copy. No replacement CI is configured.
-- Clone or download the uploaded source into a fresh directory and follow
-  `ios-port.md`. Record whether that independent build succeeds. This clean
-  publication-copy build remains a pending preparation step.
+The first release is **v0.1.0-alpha.1**, marked as a **pre-release**. The
+configured device target is arm64 with iPadOS 17.0 or later. The maintainer
+reports usability on an 11-inch iPad Pro (2022, M2); this is not a complete
+device/feature compatibility audit.
 
-## Before publishing an IPA
+The iOS AAC backend uses Apple AudioToolbox. FDK-AAC remains in the upstream
+source collection for other platforms but is not linked into the iOS app.
 
-1. Choose the public application name, independent artwork and a bundle
-   identifier controlled by the maintainer. Preserve upstream attribution.
-   The code license does not itself grant rights to trademarks.
-2. Freeze a source commit and tag, for example `v0.1.0-alpha.1`. Record the
-   upstream Studio version separately from the port version and bundle revision.
-3. Record Xcode/SDK, Qt kit version, build options and all linked dependency
-   versions. Determine the actual license option for the Qt modules used.
-4. Prepare complete corresponding source materials for the application and
-   applicable dependencies. Qt is statically linked; include the matching Qt
-   sources, relevant modifications and other required dependency sources,
-   including HarfBuzz. Inventory the actual build instead of assuming a short
-   list covers everything. Preserve third-party/font/SoundFont notices.
-5. Provide clear build and installation instructions. Distinguish source
-   dependencies from generally available build tools and system SDKs. Do not
-   redistribute Apple SDKs or account credentials as dependency source.
-6. Build the IPA from that frozen source and run the priority data-preservation
-   checks in `testing.md`. State which device/features were actually tested.
-7. Inspect the final package and its license materials. Publish an unsigned
-   IPA for users to sign with their own compatible workflow. Include no personal
-   signing key, certificate, provisioning profile or account credentials.
-8. Place the IPA, source/dependency materials and release notes together in
-   a GitHub Release draft. Explicitly identify which source commit produced
-   the IPA and where the matching dependency sources can be obtained.
-9. Mark the first release as a **pre-release**. Verify download links and
-   source completeness before publishing. Keep corresponding source accessible
-   for every binary version still being distributed.
+## Source and binary preparation
 
-A GitHub-generated source ZIP covers this repository's tracked files, not
-the separately installed Qt kit or downloaded build dependencies. Linking
-only to the original upstream application source does not describe this
-modified binary. Supplying complete, clearly identified source archives
-alongside the IPA is the simplest initial release arrangement.
+1. Work on `ipad-port`, based on upstream `v4.7.5`. Review the changes and
+   exclude build output, personal logs, signing files and credentials.
+2. Update README/NOTICE/CHANGELOG and build/install instructions. Retain
+   application, dependency, font and SoundFont notices.
+3. Commit the reviewed source and record the full commit. Tag that commit
+   with the port release version; record the upstream version separately.
+4. Build the device IPA with a new bundle revision and
+   `MUE_IOS_INCLUDE_RELEASE_NOTICES=ON`. Supply matching Qt Sources using
+   `MUE_QT_SOURCE_DIR`. Build from the recorded commit with no later source
+   changes; otherwise record and rebuild the final source instead.
+5. Audit the IPA for personal paths, signatures, provisioning profiles,
+   credentials, logs and macOS metadata. Do not publish private audit output.
+6. Prepare matching application source with `git archive`. Provide the
+   separately installed Qt 6.11.2 Sources component, matching Qt kit build
+   evidence and HarfBuzz 12.3.0 sources. Sources of vendored components and
+   their build definitions remain in the application archive. Do not include
+   Apple SDKs, signing credentials or personal build directories.
+7. Record the source commit, bundle revision, build tools/options, dependency
+   versions and SHA-256 checksums. State the actual scope of device testing.
+8. Upload the unsigned IPA, matching source materials, build/release
+   information and checksums to one GitHub Release. Mark it as a pre-release.
+9. Check that the published downloads and recorded source commit are present.
+   Keep corresponding source materials accessible while distributing a binary.
 
-## Suggested release note
+## Release assets
 
-```text
-Unofficial experimental iPadOS port of MuseScore Studio 4.7.5.
-Not affiliated with or endorsed by MuseScore or Muse Group.
+- `CantoForge-v0.1.0-alpha.1-iPad-unsigned.ipa`
+- `CantoForge-v0.1.0-alpha.1-source.tar.gz`
+- `qt-6.11.2-maintenance-tool-source.tar.gz`
+- `qt-6.11.2-ios-build-evidence.tar.gz`
+- `harfbuzz-12.3.0.tar.xz`
+- `CantoForge-v0.1.0-alpha.1-build-info.json`
+- `SOURCE-MANIFEST.json`, `RELEASE-INFO.md`, and `SHA256SUMS`
 
-Port version: [tag]
-Source commit: [commit]
-iPad bundle revision: [revision]
-Tested device and iPadOS: [actual result]
-Configured minimum OS: iPadOS 17.0; other versions may be untested.
+Qt is statically linked. GitHub's automatic repository source ZIP does not
+include Qt or separately downloaded dependency sources. The release assets
+provide the separately prepared materials alongside the application source.
+Qt modules and their third-party components retain their applicable licenses;
+do not describe the complete dependency collection as having a single license.
 
-Installation: unsigned IPA; sign with your own compatible sideloading tool.
-Test with copies of scores. Full feature/device compatibility is not established.
+## Installation and feedback
 
-Changes: [summary]
-Known issues: [list]
-Application source: [download/link]
-Dependency sources and license notices: [downloads/links]
-Build/install instructions: [link]
-Report port issues in this repository.
-```
+The IPA is unsigned. Users sign it with their own compatible sideloading
+workflow. The public app uses a different identifier from early personal
+builds and may install as a separate application. Back up/export scores before
+removing the older app. Report port issues in the CantoForge repository.
 
-## References
-
-- [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
-- [GNU distribution FAQ](https://www.gnu.org/licenses/gpl-faq.en.html)
-- [Qt open-source licensing obligations](https://www.qt.io/development/open-source-lgpl-obligations)
-- [GitHub release management](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
-
-Consult the actual licenses for the chosen build. This checklist is a
-release preparation aid, not a certification of compliance.
+This guide describes release preparation. It does not claim exhaustive
+runtime testing or a legal certification. The manual test guide is in
+[testing.md](testing.md); build instructions are in [ios-port.md](ios-port.md).

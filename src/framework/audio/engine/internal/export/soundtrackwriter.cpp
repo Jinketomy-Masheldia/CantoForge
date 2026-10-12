@@ -115,8 +115,11 @@ Ret SoundTrackWriter::write()
     m_source->setOutputSpec(m_encoderPtr->format().outputSpec);
     m_source->setIsActive(true);
 
+    bool encoderFinalized = false;
     DEFER {
-        m_encoderPtr->flush();
+        if (!encoderFinalized) {
+            m_encoderPtr->flush();
+        }
 
         //! NOTE Changes to the source and audio engine state
         //! must be performed via execOperation - so that synchronization with the audio driver process works
@@ -134,6 +137,11 @@ Ret SoundTrackWriter::write()
     Ret ret = writeStreaming();
     if (!ret) {
         return ret;
+    }
+
+    encoderFinalized = true;
+    if (!m_encoderPtr->finalize()) {
+        return make_ret(Err::ErrorEncode);
     }
 
     return muse::make_ok();

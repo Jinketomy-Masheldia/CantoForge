@@ -40,7 +40,9 @@ BaseSection {
 
         width: parent.width
 
-        text: qsTrc("preferences", "Show welcome screen when MuseScore Studio launches")
+        text: Qt.platform.os === "ios" ? qsTrc("preferences", "Show welcome screen when CantoForge launches")
+                                       : qsTrc("preferences", "Show welcome screen when MuseScore Studio launches")
+        enabled: Qt.platform.os !== "ios"
         checked: root.model.showWelcomeDialog
 
         navigation.name: checkbox.text

@@ -50,6 +50,9 @@ public:
 
     Q_INVOKABLE QString museScoreVersion() const;
     Q_INVOKABLE QString museScoreRevision() const;
+    Q_INVOKABLE QString upstreamVersion() const;
+    Q_INVOKABLE QString portBuildVersion() const;
+    Q_INVOKABLE QVariantMap portProjectUrl() const;
     Q_INVOKABLE QVariantMap museScoreUrl() const;
     Q_INVOKABLE QVariantMap museScoreForumUrl() const;
     Q_INVOKABLE QVariantMap museScoreContributionUrl() const;

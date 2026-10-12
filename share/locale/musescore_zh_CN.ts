@@ -9745,6 +9745,11 @@ followed by dashes</source>
         <source>Se&amp;lection filter</source>
         <translation>过滤器 (&amp;L)</translation>
     </message>
+    <message>
+        <location filename="../../src/appshell/internal/applicationuiactions.cpp"/>
+        <source>&amp;About CantoForge…</source>
+        <translation>关于 CantoForge (&amp;A)…</translation>
+    </message>
 </context>
 <context>
     <name>appshell</name>
@@ -10081,6 +10086,58 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <source>Unstable prerelease for %1</source>
         <translation>%1的预发布不稳定版</translation>
     </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>About CantoForge</source>
+        <translation>关于 CantoForge</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>CantoForge is an independent, unofficial iPadOS port of MuseScore Studio. It is not affiliated with or endorsed by MuseScore or Muse Group.</source>
+        <translation>CantoForge 是 MuseScore Studio 的独立、非官方 iPadOS 移植项目，与 MuseScore 或 Muse Group 无隶属关系，也未获得其认可。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>Based on MuseScore Studio %1</source>
+        <translation>基于 MuseScore Studio %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>iPad app build: %1</source>
+        <translation>iPad 应用构建号：%1</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>Source base revision:</source>
+        <translation>源码基础修订版：</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>Project source, releases and issue reports: &lt;a href="%1"&gt;GitHub&lt;/a&gt;.</source>
+        <translation>项目源码、发布版本与问题反馈：&lt;a href="%1"&gt;GitHub&lt;/a&gt;。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>The MuseScore &lt;a href="%1"&gt;website&lt;/a&gt; and &lt;a href="%2"&gt;forum&lt;/a&gt; are upstream resources. Report iPad port issues to the CantoForge project.</source>
+        <translation>MuseScore &lt;a href="%1"&gt;官网&lt;/a&gt;与&lt;a href="%2"&gt;论坛&lt;/a&gt;是上游项目资源。iPad 移植版的问题请反馈给 CantoForge 项目。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>CantoForge stores scores and diagnostic logs on your device. Online tutorials and external websites use network connections and are subject to their providers’ privacy policies.</source>
+        <translation>CantoForge 将乐谱和诊断日志保存在你的设备上。在线教程和外部网站需要网络连接，并适用其服务提供方的隐私政策。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>iPadOS adaptations: CantoForge contributors. Third-party libraries, fonts and SoundFonts retain their own licenses and notices.</source>
+        <translation>iPadOS 移植：CantoForge 贡献者。第三方库、字体与 SoundFont 音色保留各自的许可证与声明。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml"/>
+        <source>Copyright © 1999-2026 MuseScore Limited and others.
+Published under the &lt;a href="%1"&gt;GNU General Public License version 3&lt;/a&gt;.</source>
+        <translation>版权 © 1999–2026 MuseScore Limited 及其他贡献者。
+依据 &lt;a href="%1"&gt;GNU 通用公共许可证第 3 版&lt;/a&gt;发布。</translation>
+    </message>
 </context>
 <context>
     <name>appshell/dock</name>
@@ -10188,6 +10245,36 @@ Published under the &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/firstlaunchsetupmodel.cpp" line="126"/>
         <source>Keep going</source>
         <translation>继续</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/ThemesPage.qml"/>
+        <source>Welcome to CantoForge</source>
+        <translation>欢迎来到 CantoForge</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml"/>
+        <source>About CantoForge</source>
+        <translation>关于 CantoForge</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml"/>
+        <source>An unofficial iPadOS port of MuseScore Studio.</source>
+        <translation>MuseScore Studio 的非官方 iPadOS 移植版。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml"/>
+        <source>CantoForge is an independent project based on MuseScore Studio 4.7.5. It is not affiliated with or endorsed by MuseScore or Muse Group.</source>
+        <translation>CantoForge 是基于 MuseScore Studio 4.7.5 的独立项目，与 MuseScore 或 Muse Group 无隶属关系，也未获得其认可。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml"/>
+        <source>The desktop interface and core notation features are retained. Some desktop integrations are unavailable on iPadOS.</source>
+        <translation>保留桌面版界面与核心记谱功能。部分桌面版集成功能在 iPadOS 上不可用。</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/TutorialsPage.qml"/>
+        <source>CantoForge stores scores and diagnostic logs on your device. Online tutorials and external websites use network connections and are subject to their providers’ privacy policies.</source>
+        <translation>CantoForge 将乐谱和诊断日志保存在你的设备上。在线教程和外部网站需要网络连接，并适用其服务提供方的隐私政策。</translation>
     </message>
 </context>
 <context>
@@ -34719,6 +34806,11 @@ failed: %2</source>
         <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/PlaybackQualitySection.qml" line="41"/>
         <source>Use warmer instrument sound (MS Basic/SoundFont only)</source>
         <translation>使用更柔和的乐器音色（仅限 MS Basic 和声音字体）</translation>
+    </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/WelcomeDialogSection.qml"/>
+        <source>Show welcome screen when CantoForge launches</source>
+        <translation>启动 CantoForge 时显示欢迎屏幕</translation>
     </message>
 </context>
 <context>

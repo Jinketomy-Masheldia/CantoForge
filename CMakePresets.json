@@ -148,6 +148,7 @@
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "17.0",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install",
                 "MUSESCORE_BUILD_CONFIGURATION": "app-ios",
+                "MUE_IOS_BUNDLE_IDENTIFIER": "com.jmx.cantoforge",
                 "MUSE_APP_BUILD_MODE": "dev",
                 "MUSE_COMPILE_USE_COMPILER_CACHE": "OFF",
                 "MUE_DOWNLOAD_SOUNDFONT": "OFF"

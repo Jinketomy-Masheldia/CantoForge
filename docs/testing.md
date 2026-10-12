@@ -29,6 +29,9 @@ prerequisite for submitting a useful report. Test with copies of scores.
 - Play/pause with bundled MS Basic, adjust mixer settings and check sound.
 - Export a small score as PDF, MusicXML, MIDI and one audio format. Verify the
   exported files with an appropriate external viewer/player/application.
+- For revision 11 and later, export AAC at 32/44.1/48 kHz and several available
+  bit rates. Play each file through its final notes and compare its duration
+  with the score. Switching from MP3 to AAC must display a supported bit rate.
 - Open preferences and switch between pages.
 - Open/close About, score creation, export and other dialogs.
 - Open File → Open Recent; repeatedly switch submenu rows, then dismiss outside.

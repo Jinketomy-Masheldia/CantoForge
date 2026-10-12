@@ -63,7 +63,11 @@ const UiActionList ApplicationUiActions::m_actions = {
     UiAction("about-musescore",
              mu::context::UiCtxAny,
              mu::context::CTX_ANY,
+#ifdef Q_OS_IOS
+             TranslatableString("action", "&About CantoForge…")
+#else
              TranslatableString("action", "&About MuseScore Studio…")
+#endif
              ),
     UiAction("about-qt",
              mu::context::UiCtxAny,

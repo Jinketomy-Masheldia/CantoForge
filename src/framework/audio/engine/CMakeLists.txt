@@ -192,9 +192,21 @@ if (MUSE_MODULE_AUDIO_EXPORT)
         internal/export/flacencoder.h
         internal/export/wavencoder.cpp
         internal/export/wavencoder.h
-        internal/export/aacencoder.cpp
         internal/export/aacencoder.h
     )
+
+    if(OS_IS_IOS)
+        target_sources(muse_audio_engine PRIVATE
+            platform/ios/aacencoder.cpp
+            platform/ios/appleaacwriter.cpp
+            platform/ios/appleaacwriter.h
+        )
+        target_link_libraries(muse_audio_engine PRIVATE "-framework AudioToolbox")
+        set_source_files_properties(platform/ios/aacencoder.cpp platform/ios/appleaacwriter.cpp PROPERTIES
+            SKIP_UNITY_BUILD_INCLUSION ON SKIP_PRECOMPILE_HEADERS ON)
+    else()
+        target_sources(muse_audio_engine PRIVATE internal/export/aacencoder.cpp)
+    endif()
 
     if(MUE_COMPILE_USE_SYSTEM_LAME)
         set(MUE_LAME_INCLUDE_DIR "" CACHE PATH "Path to directory containing lame/lame.h (optional)")
@@ -230,8 +242,10 @@ if (MUSE_MODULE_AUDIO_EXPORT)
     include(../cmake/SetupFlac.cmake)
     target_link_libraries(muse_audio_engine PRIVATE ${FLAC_TARGETS})
 
-    add_subdirectory(../thirdparty/fdk-aac fdk_aac EXCLUDE_FROM_ALL)
-    target_link_libraries(muse_audio_engine PRIVATE fdk_aac)
+    if(NOT OS_IS_IOS)
+        add_subdirectory(../thirdparty/fdk-aac fdk_aac EXCLUDE_FROM_ALL)
+        target_link_libraries(muse_audio_engine PRIVATE fdk_aac)
+    endif()
 endif() # MUSE_MODULE_AUDIO_EXPORT
 
 target_link_libraries(muse_audio_engine PRIVATE muse_audio_common)

@@ -21,6 +21,7 @@
  */
 import QtQuick
 import QtQuick.Window
+import QtQuick.Layouts
 
 import Muse.Ui
 import Muse.UiComponents
@@ -28,12 +29,14 @@ import Muse.GraphicalEffects
 import MuseScore.AppShell
 
 Page {
-    title: qsTrc("appshell/gettingstarted", "Playback")
-    explanation: qsTrc("appshell/gettingstarted", "Discover new sound libraries in MuseHub and enjoy realistic score playback")
+    title: Qt.platform.os === "ios" ? qsTrc("appshell/gettingstarted", "About CantoForge")
+                                    : qsTrc("appshell/gettingstarted", "Playback")
+    explanation: Qt.platform.os === "ios" ? qsTrc("appshell/gettingstarted", "An unofficial iPadOS port of MuseScore Studio.")
+                                          : qsTrc("appshell/gettingstarted", "Discover new sound libraries in MuseHub and enjoy realistic score playback")
 
     titleContentSpacing: 12
 
-    extraButtonTitle: qsTrc("appshell/gettingstarted", "Watch video")
+    extraButtonTitle: Qt.platform.os === "ios" ? "" : qsTrc("appshell/gettingstarted", "Watch video")
 
     onExtraButtonClicked: {
         Qt.openUrlExternally("https://youtu.be/L8OdWHOjL8c")
@@ -41,6 +44,7 @@ Page {
 
     Image {
         id: image
+        visible: Qt.platform.os !== "ios"
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         source: "resources/MuseSounds.png"
@@ -50,5 +54,33 @@ Page {
         layer.effect: RoundedCornersEffect {
             radius: 3
         }
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        visible: Qt.platform.os === "ios"
+        spacing: 12
+
+        Image {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: 80
+            Layout.preferredHeight: 80
+            source: "qrc:/resources/appIcon.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        StyledTextLabel {
+            Layout.fillWidth: true
+            text: qsTrc("appshell/gettingstarted", "CantoForge is an independent project based on MuseScore Studio 4.7.5. It is not affiliated with or endorsed by MuseScore or Muse Group.")
+            wrapMode: Text.WordWrap
+        }
+
+        StyledTextLabel {
+            Layout.fillWidth: true
+            text: qsTrc("appshell/gettingstarted", "The desktop interface and core notation features are retained. Some desktop integrations are unavailable on iPadOS.")
+            wrapMode: Text.WordWrap
+        }
+
+        Item { Layout.fillHeight: true }
     }
 }

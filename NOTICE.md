@@ -21,13 +21,16 @@ and license notices in individual files remain in place.
 ## iPadOS modifications
 
 The iPadOS adaptations were developed in October 2026. This publication
-snapshot documents those changes on **2026-10-11**. See [CHANGELOG.md](CHANGELOG.md)
+snapshot documents those changes through **2026-10-12**. See [CHANGELOG.md](CHANGELOG.md)
 for their scope and the repository history for subsequent changes and authors.
 
 This is an unofficial project, maintained separately from MuseScore and
 Muse Group. It does not represent an official mobile release or endorsement.
-The current source retains upstream artwork and application branding;
-public binary naming and artwork must be reviewed before an IPA release.
+The iPad application uses the independent name **CantoForge**, the maintainer's
+supplied logo, and the bundle identifier **com.jmx.cantoforge**. Upstream
+copyright and component attribution remain intact. Upstream resource files,
+manuals, tutorials and links are retained where applicable. No affiliation,
+endorsement or separate permission to use upstream trademarks is claimed.
 
 Substantial port and documentation work used OpenAI Codex assistance.
 Maintainer device feedback and targeted build/runtime checks informed the
@@ -51,12 +54,17 @@ bill of materials or a completed dependency-license audit.
 
 ## Binary distribution status
 
-Development IPAs have been generated for personal testing. A public IPA
-release must identify its exact source revision, preserve applicable notices,
-and provide the required corresponding sources for linked dependencies,
-including the actual Qt version used. See [docs/releasing.md](docs/releasing.md).
+The first public release is prepared as **v0.1.0-alpha.1**. Its release
+materials identify the source revision and include the unsigned IPA, matching
+application/dependency source archives, build information, notices and
+checksums. See [docs/releasing.md](docs/releasing.md).
 
 No signing certificate, private signing key, provisioning profile or account
 credential is intended to be part of this repository or a public release.
 The Crashpad test key and its generator are upstream test fixtures, not
 credentials for installing or signing this application.
+
+The iOS AAC encoder uses Apple AudioToolbox, provided by the operating system.
+FDK-AAC remains in the upstream source tree for other platforms but is not
+compiled or linked into this iOS binary. Release builds can bundle application,
+Qt and dependency notices using `MUE_IOS_INCLUDE_RELEASE_NOTICES=ON`.

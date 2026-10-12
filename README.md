@@ -1,105 +1,113 @@
-# MuseScore Studio for iPad — Unofficial Port
+<p align="center">
+  <img src="buildscripts/packaging/iOS/icons/CantoForge.png" alt="CantoForge logo" width="128">
+</p>
 
-An experimental iPadOS port of **MuseScore Studio 4.7.5**, preserving the
-desktop interface and core notation features.
+# CantoForge
 
-**This project is not affiliated with or endorsed by MuseScore or Muse Group.**
-It is a personal, community-oriented port of the open-source desktop Studio
-application. It is not the official MuseScore mobile application.
+**An unofficial iPadOS port of MuseScore Studio 4.7.5**, retaining the desktop
+interface and core music notation features.
 
-## Status
+CantoForge is an independent community project. It is **not affiliated with
+or endorsed by MuseScore or Muse Group**, and is not the official MuseScore
+mobile application.
 
-The port launches and is usable on the maintainer's 11-inch iPad Pro (2022,
-M2), running iPadOS 26.6 as reported by the owner. Many workflows have been
-reported usable, but there has not been a complete feature or device audit.
-Use copies of important scores while testing.
+## Download and install
 
-| Area | Current status |
+Download the unsigned IPA from [Releases](https://github.com/Jinketomy-Masheldia/CantoForge/releases).
+The first release is **v0.1.0-alpha.1**, an experimental pre-release.
+The port release number is separate from the upstream Studio version and the
+iPad app's bundle build number.
+
+Sign and install the IPA using your own compatible sideloading workflow, such
+as SideStore or AltStore. Signing credentials are not included. No App Store
+release is planned at present.
+
+- App name: **CantoForge**
+- Bundle identifier: **com.jmx.cantoforge**
+- Configured target: **arm64 iPads, iPadOS 17.0 or later**
+- Reported test device: **11-inch iPad Pro (2022, M2)**, with iPadOS 26.6 as
+  reported by its owner. Other devices and OS versions are not established
+  as tested.
+
+The bundle identifier differs from the older personal development builds.
+CantoForge may install as a separate application. Export or back up scores
+before removing an older version. Use copies of important scores while
+trying this experimental port.
+
+## Features and limitations
+
+| Area | Status |
 | --- | --- |
-| Desktop interface and score editor | Retained; basic use reported working on the test iPad |
-| Score creation, preferences and export dialogs | Platform fixes implemented; targeted host runtime checks passed |
-| Playback | CoreAudio output and bundled SoundFont synthesis implemented |
-| Files integration | Document import, local score storage and file sharing implemented |
-| Touch input | Single-finger canvas panning, tap selection, long-press context menus and touch-aware submenus implemented |
-| External mouse and keyboard | Desktop input retained; iPad secondary-click bridge implemented; accessory-specific behavior needs testing |
-| Text editing | Title-editing exit and popup-lifetime fixes included; broader input-method testing remains open |
-| Import and export formats | Core modules retained; every format has not been verified on iPad |
-
-The build targets **arm64 iPads with iPadOS 17.0 or later**. This is the
-configured deployment target, not a claim that all supported OS versions or
-iPad models have been tested. Portrait layouts, multitasking, Apple Pencil,
-accessibility and larger-score performance need additional reports.
+| Desktop interface and notation editor | Retained; many workflows reported usable on the test iPad |
+| Score creation, preferences and export dialogs | iPad platform fixes included |
+| Playback | CoreAudio output with bundled MS Basic and FluidR3Mono SoundFonts |
+| Audio export | Apple AudioToolbox AAC-LC/ADTS backend; other retained desktop formats depend on the available exporters |
+| Files integration | Document import, local score storage and file sharing |
+| Touch input | Score panning, tap selection, long-press context menus and touch-aware submenus |
+| External mouse and keyboard | Desktop input retained, with an iPad secondary-click bridge |
+| Import/export formats | Core modules retained; every format has not been verified on iPad |
+| Languages | Upstream translations retained; new CantoForge text translated into Simplified and Traditional Chinese, with English fallback elsewhere |
 
 MuseSounds/MuseSampler, desktop VST plug-ins, the desktop updater, subprocess
 multiwindow support, cloud integration, automation and video export are
-disabled in the iPad configuration. Experimental MNX import/export is disabled
-by the helper script. Printing and some desktop/native dialogs remain
-unverified. Script/QML extensions are retained, but external-process APIs
-are unavailable.
+disabled in the iPad configuration. Cloud save and publishing controls are
+disabled. Experimental MNX import/export is disabled by the build helper.
+Script/QML extensions are retained, but external-process APIs are unavailable.
 
-## Build and install
+Portrait layouts, multitasking, Apple Pencil, accessibility, printing,
+larger-score performance and accessory-specific behavior need further testing.
+This is not a claim of complete feature or device compatibility.
 
-Build on macOS with Xcode, CMake, Ninja, matching Qt iOS/macOS kits, and
-HarfBuzz sources. The development build used **Qt 6.11.2** and the
-**iPhoneOS 26.5 SDK**.
+## Build from source
 
-See [Build and installation instructions](docs/ios-port.md).
+Build on macOS with Xcode, CMake, Ninja, matching **Qt 6.11.2 iOS/macOS kits**,
+and **HarfBuzz 12.3.0 sources**. Development used the iPhoneOS 26.5 SDK.
 
-The helper generates an **unsigned IPA**. Sign it with your own compatible
-sideloading workflow. Signing credentials are not included. No App Store
-release is planned for this project at present.
+See [build and installation instructions](docs/ios-port.md).
+The `ipad-port` branch is based on upstream `v4.7.5` commit
+`3654226c2e99289916916953a98e585a3d3b315a`, preserving upstream Git history.
+The framework and vendored dependencies for this baseline are in-tree;
+the later upstream development branch's submodules are not required.
 
-## Testing and feedback
+Each binary release includes matching application and dependency source
+materials, build information, license notices and checksums. Qt is statically
+linked; the automatic GitHub source ZIP alone does not include the separately
+installed Qt sources. See [release preparation](docs/releasing.md).
 
-- Read the [manual testing guide](docs/testing.md).
-- Report port-specific issues in **this repository's Issues tab**.
-- Include the port/bundle revision, iPad model, iPadOS version, input device,
-  reproduction steps and a minimal score where possible.
-- Logs are available through Files in the application's Documents directory.
-  Native crash reports may also be available in iPadOS Analytics Data.
+## Privacy and feedback
+
+Scores and diagnostic logs are stored on your device. Online learning content
+uses network connections, and external websites are subject to their providers'
+privacy policies. Local logs can contain score filenames and paths; review
+logs before sharing them publicly.
+
+Report port-specific issues in [this repository's Issues](https://github.com/Jinketomy-Masheldia/CantoForge/issues).
+Include the app build number, iPad model, iPadOS version, input device and steps
+to reproduce the problem. Logs are available through Files in the application's
+Documents directory. See [the manual testing guide](docs/testing.md).
 
 Do not send port-only issues to the upstream team as official Studio bugs.
-If the same problem occurs in the official desktop application, say so in
-the report so it can be assessed for upstream reporting.
+If a problem also occurs in official desktop Studio, mention that in the report.
 
-## Source, licensing and releases
+## Licensing and acknowledgements
 
-The `ipad-port` branch is based on upstream tag **`v4.7.5`**, commit
-`3654226c2e99289916916953a98e585a3d3b315a`, and preserves its Git history.
-It includes the iPadOS adaptations developed in October 2026. The upstream
-development branch is separate from this port; select `ipad-port` when
-browsing or cloning the iPad source.
-
-The application is licensed under **GNU GPL version 3**; see [LICENSE.txt](LICENSE.txt).
-Existing copyright notices and the upstream font exception are retained.
+CantoForge derives from MuseScore Studio under **GNU GPL version 3**, with the
+existing upstream font exception. See [LICENSE.txt](LICENSE.txt) and
+[provenance and notices](NOTICE.md). Original copyright notices are retained.
 Third-party libraries, fonts and SoundFonts retain their individual licenses.
-See [provenance and notices](NOTICE.md).
-
-Public IPA release materials are still being prepared. In particular, Qt is
-statically linked: the repository's automatic source archive alone does not
-provide all corresponding dependency sources for an IPA. Follow the
-[release preparation guide](docs/releasing.md) before distributing binaries.
-This repository preparation is not a completed license audit or a public
-binary release.
-
-## Contributing
-
-Bug reports, device testing, documentation fixes and focused patches are
-welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-
-Substantial parts of the port and its documentation were developed with
-assistance from **OpenAI Codex**, using build/runtime checks and the
-maintainer's device feedback. Further human review and device testing are
-welcome; this disclosure does not imply full feature verification.
-
-## Upstream and acknowledgements
 
 - [MuseScore Studio source](https://github.com/musescore/MuseScore)
 - [MuseScore.org](https://musescore.org/)
 - [Original upstream README](docs/upstream/README.md)
 
-MuseScore Studio, its contributors and the authors of Qt and the bundled
-dependencies provide the editor, engraving engine and other foundations of
-this port. The original desktop source and resource licenses are preserved.
-Project names and trademarks belong to their respective owners; the code
-license does not itself grant trademark rights.
+MuseScore Studio contributors, Qt and the bundled dependency authors provide
+the editor, engraving engine and other foundations of this port. Upstream
+manual, tutorial and forum links remain available as upstream resources.
+Project names and trademarks belong to their respective owners.
+
+The CantoForge logo was supplied by the maintainer. Substantial port and
+documentation work was developed with assistance from **OpenAI Codex**, informed
+by build/runtime checks and the maintainer's device feedback.
+
+Bug reports, device testing, documentation fixes and focused patches are welcome.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

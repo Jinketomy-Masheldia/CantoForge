@@ -63,7 +63,7 @@ elseif(OS_IS_LIN)
 
 elseif(OS_IS_IOS)
     set(MACOSX_BUNDLE_GUI_IDENTIFIER ${MUSE_APP_GUI_IDENTIFIER})
-    set(MACOSX_BUNDLE_BUNDLE_NAME "MuseScore Studio")
+    set(MACOSX_BUNDLE_BUNDLE_NAME "CantoForge")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${MUSE_APP_VERSION})
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_BUILD_NUMBER})
 elseif(OS_IS_MAC)
@@ -241,6 +241,14 @@ qt_add_executable(MuseScoreStudio
     ${MSCORE_APPEND_SRC}
     ${APP_SRC}
 )
+
+if(OS_IS_IOS)
+    set(APP_ICON_FILE "${PROJECT_SOURCE_DIR}/buildscripts/packaging/iOS/icons/CantoForge.png")
+else()
+    set(APP_ICON_FILE "${PROJECT_SOURCE_DIR}/share/icons/AppIcon/MS4_AppIcon_96x96.png")
+endif()
+set_source_files_properties("${APP_ICON_FILE}" PROPERTIES QT_RESOURCE_ALIAS "resources/appIcon.png")
+qt_add_resources(MuseScoreStudio application_icon PREFIX "/" FILES "${APP_ICON_FILE}")
 
 ###########################################
 # Setting target properties

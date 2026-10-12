@@ -131,6 +131,12 @@ INotationSelectionPtr ProjectActionsController::currentNotationSelection() const
 
 bool ProjectActionsController::canReceiveAction(const ActionCode& code) const
 {
+#ifdef Q_OS_IOS
+    if (code == "file-save-to-cloud" || code == "file-publish" || code == "file-share-audio") {
+        return false;
+    }
+#endif
+
     if (!currentNotationProject()) {
         static const std::unordered_set<ActionCode> DONT_REQUIRE_OPEN_PROJECT {
             "file-new",

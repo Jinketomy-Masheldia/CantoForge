@@ -73,7 +73,11 @@ void AppShellConfiguration::init()
 {
     settings()->setDefaultValue(HAS_COMPLETED_FIRST_LAUNCH_SETUP, Val(false));
 
+#ifdef Q_OS_IOS
+    settings()->setDefaultValue(WELCOME_DIALOG_SHOW_ON_STARTUP_KEY, Val(false));
+#else
     settings()->setDefaultValue(WELCOME_DIALOG_SHOW_ON_STARTUP_KEY, Val(true));
+#endif
     settings()->valueChanged(WELCOME_DIALOG_SHOW_ON_STARTUP_KEY).onReceive(this, [this](const Val&) {
         m_welcomeDialogShowOnStartupChanged.notify();
     });
@@ -110,11 +114,19 @@ void AppShellConfiguration::setHasCompletedFirstLaunchSetup(bool has)
 
 bool AppShellConfiguration::welcomeDialogShowOnStartup() const
 {
+#ifdef Q_OS_IOS
+    // Ignore saved desktop/development settings as well as version-change resets.
+    return false;
+#else
     return settings()->value(WELCOME_DIALOG_SHOW_ON_STARTUP_KEY).toBool();
+#endif
 }
 
 void AppShellConfiguration::setWelcomeDialogShowOnStartup(bool show)
 {
+#ifdef Q_OS_IOS
+    show = false;
+#endif
     settings()->setSharedValue(WELCOME_DIALOG_SHOW_ON_STARTUP_KEY, Val(show));
 }
 

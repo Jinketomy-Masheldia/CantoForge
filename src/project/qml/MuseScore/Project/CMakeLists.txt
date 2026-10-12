@@ -20,6 +20,13 @@
 
 muse_create_qml_module(project_qml FOR project)
 
+if(OS_IS_IOS)
+    target_link_libraries(project_qml PRIVATE "-framework AudioToolbox")
+    # Apple headers conflict with names imported by other sources in a unity unit.
+    set_source_files_properties(internal/Export/exportdialogmodel.cpp PROPERTIES
+        SKIP_UNITY_BUILD_INCLUSION ON SKIP_PRECOMPILE_HEADERS ON)
+endif()
+
 qt_add_qml_module(project_qml
     URI MuseScore.Project
     VERSION 1.0

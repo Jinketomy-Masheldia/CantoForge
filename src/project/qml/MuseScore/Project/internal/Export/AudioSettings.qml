@@ -79,7 +79,7 @@ Row {
             navigation.row: root.navigationOrderStart + 2
             navigation.accessible.name: bitrateLabel.text + " " + currentText
 
-            model: root.model ? root.model.availableBitRates().map(function(bitRate) {
+            model: root.model ? root.model.bitRateOptions.map(function(bitRate) {
                 return { text: qsTrc("project/export", "%1 kBit/s").arg(bitRate), value: bitRate }
             }) : []
 

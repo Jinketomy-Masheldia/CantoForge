@@ -34,6 +34,10 @@
 #include "translation.h"
 #include "log.h"
 
+#ifdef Q_OS_IOS
+#include "audio/engine/platform/ios/appleaacwriter.h"
+#endif
+
 using namespace muse;
 using namespace mu::project;
 using namespace mu::notation;
@@ -321,6 +325,9 @@ void ExportDialogModel::setExportType(const ExportType& type)
     }
 
     m_selectedExportType = type;
+
+    ensureSupportedAudioBitRate();
+    emit availableBitRatesChanged();
 
     emit selectedExportTypeChanged(type.toMap());
     emit availableSampleFormatsChanged();
@@ -705,13 +712,40 @@ void ExportDialogModel::setSampleRate(int rate)
     }
 
     audioExportConfiguration()->setExportSampleRate(rate);
+    ensureSupportedAudioBitRate();
+    emit availableBitRatesChanged();
     emit sampleRateChanged(rate);
 }
 
 QList<int> ExportDialogModel::availableBitRates() const
 {
+#ifdef Q_OS_IOS
+    if (m_selectedExportType.suffixes.contains("aac")) {
+        const auto rates = muse::audio::encode::AppleAacWriter::supportedBitRates(sampleRate(), 2);
+        QList<int> result;
+        for (auto rate : rates) {
+            result.push_back(static_cast<int>(rate / 1000));
+        }
+        return result;
+    }
+#endif
     const std::vector<int>& rates = audioExportConfiguration()->availableMp3BitRates();
     return QList<int>(rates.cbegin(), rates.cend());
+}
+
+void ExportDialogModel::ensureSupportedAudioBitRate()
+{
+#ifdef Q_OS_IOS
+    if (m_selectedExportType.suffixes.contains("aac")) {
+        const auto rates = availableBitRates();
+        const int current = bitRate();
+        if (!rates.empty() && !rates.contains(current)) {
+            setBitRate(*std::min_element(rates.begin(), rates.end(), [current](int left, int right) {
+                return std::abs(left - current) < std::abs(right - current);
+            }));
+        }
+    }
+#endif
 }
 
 int ExportDialogModel::bitRate() const

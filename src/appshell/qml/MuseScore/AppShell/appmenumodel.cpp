@@ -189,6 +189,12 @@ MenuItem* AppMenuModel::makeMenuItem(const ActionCode& actionCode, MenuItemRole 
 
 MenuItem* AppMenuModel::makeFileMenu()
 {
+#ifdef Q_OS_IOS
+    constexpr bool publishOnlineEnabled = false;
+#else
+    constexpr bool publishOnlineEnabled = true;
+#endif
+
     MenuItemList recentScoresList = makeRecentScoresItems();
     bool openRecentEnabled = !recentScoresList.isEmpty();
 
@@ -206,7 +212,7 @@ MenuItem* AppMenuModel::makeFileMenu()
         makeMenuItem("file-save-as"),
         makeMenuItem("file-save-to-cloud"),
         makeMenu(TranslatableString("appshell/menu/file", "Save o&ther"), makeSaveOtherSubItems()),
-        makeMenu(TranslatableString("appshell/menu/file", "Pu&blish online"), makePublishOnlineSubItems()),
+        makeMenu(TranslatableString("appshell/menu/file", "Pu&blish online"), makePublishOnlineSubItems(), "", publishOnlineEnabled),
         makeSeparator(),
         makeMenuItem("file-import-pdf"),
         makeMenuItem("file-import-audio-to-score"),

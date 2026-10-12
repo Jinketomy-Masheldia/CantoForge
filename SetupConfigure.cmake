@@ -72,6 +72,8 @@ endif()
 # Setup paths
 ###########################################
 if (OS_IS_IOS)
+    # Keep developer checkout paths out of __FILE__ and compiler debug records.
+    add_compile_options("-ffile-prefix-map=${CMAKE_SOURCE_DIR}=/CantoForge")
     set(Mscore_INSTALL_NAME "")
     set(Mscore_SHARE_NAME "mscore.app/")
 elseif (OS_IS_MAC)

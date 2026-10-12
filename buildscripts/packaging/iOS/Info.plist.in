@@ -3,8 +3,8 @@
 <plist version="1.0"><dict>
     <key>CFBundleExecutable</key><string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
     <key>CFBundleIdentifier</key><string>${MACOSX_BUNDLE_GUI_IDENTIFIER}</string>
-    <key>CFBundleName</key><string>MuseScore Studio</string>
-    <key>CFBundleDisplayName</key><string>MuseScore Studio</string>
+    <key>CFBundleName</key><string>CantoForge</string>
+    <key>CFBundleDisplayName</key><string>CantoForge</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
     <key>CFBundleVersion</key><string>${MACOSX_BUNDLE_BUNDLE_VERSION}</string>
@@ -13,7 +13,7 @@
     <key>CFBundleSupportedPlatforms</key><array><string>${MUE_IOS_SUPPORTED_PLATFORM}</string></array>
     <key>CFBundleIcons~ipad</key><dict>
         <key>CFBundlePrimaryIcon</key><dict>
-            <key>CFBundleIconFiles</key><array><string>AppIcon60x60</string><string>AppIcon76x76</string></array>
+            <key>CFBundleIconFiles</key><array><string>AppIcon60x60</string><string>AppIcon76x76</string><string>AppIcon83.5x83.5</string></array>
         </dict>
     </dict>
     <key>UIDeviceFamily</key><array><integer>2</integer></array>

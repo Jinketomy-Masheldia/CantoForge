@@ -73,8 +73,10 @@ Page {
 
             Layout.fillWidth: true
 
-            text: qsTrc("appshell/gettingstarted", "In order to protect your privacy, MuseScore Studio does not collect any personal information. See our <a href=\"%1\">Privacy Policy</a> for more info.")
-                  .arg(tutorialsModel.museScorePrivacyPolicyUrl())
+            text: Qt.platform.os === "ios"
+                  ? qsTrc("appshell/gettingstarted", "CantoForge stores scores and diagnostic logs on your device. Online tutorials and external websites use network connections and are subject to their providers’ privacy policies.")
+                  : qsTrc("appshell/gettingstarted", "In order to protect your privacy, MuseScore Studio does not collect any personal information. See our <a href=\"%1\">Privacy Policy</a> for more info.")
+                    .arg(tutorialsModel.museScorePrivacyPolicyUrl())
 
             wrapMode: Text.WordWrap
         }

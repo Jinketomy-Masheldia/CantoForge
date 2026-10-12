@@ -27,6 +27,10 @@
 #include <QClipboard>
 #include <QUrl>
 
+#ifdef Q_OS_IOS
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 using namespace mu::appshell;
 
 AboutModel::AboutModel(QObject* parent)
@@ -45,6 +49,28 @@ QString AboutModel::museScoreVersion() const
 QString AboutModel::museScoreRevision() const
 {
     return QString::fromStdString(configuration()->museScoreRevision());
+}
+
+QString AboutModel::upstreamVersion() const
+{
+    return application()->version().toString().toQString();
+}
+
+QString AboutModel::portBuildVersion() const
+{
+#ifdef Q_OS_IOS
+    const CFBundleRef bundle = CFBundleGetMainBundle();
+    const CFTypeRef version = bundle ? CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("CFBundleVersion")) : nullptr;
+    if (version && CFGetTypeID(version) == CFStringGetTypeID()) {
+        return QString::fromCFString(static_cast<CFStringRef>(version));
+    }
+#endif
+    return application()->build().toQString();
+}
+
+QVariantMap AboutModel::portProjectUrl() const
+{
+    return makeUrl(QUrl(QStringLiteral("https://github.com/Jinketomy-Masheldia/CantoForge")));
 }
 
 QVariantMap AboutModel::museScoreUrl() const
@@ -85,6 +111,12 @@ QVariantMap AboutModel::musicXMLLicenseDeedUrl() const
 
 void AboutModel::copyRevisionToClipboard() const
 {
+#ifdef Q_OS_IOS
+    QApplication::clipboard()->setText(
+        QString("CantoForge iPad build: %1; based on MuseScore Studio %2; source base revision: %3; OS: %4; Arch.: %5 (%6-bit)")
+        .arg(portBuildVersion(), upstreamVersion(), museScoreRevision(), QSysInfo::prettyProductName(), QSysInfo::currentCpuArchitecture())
+        .arg(QSysInfo::WordSize));
+#else
     QApplication::clipboard()->setText(
         QString("OS: %1, Arch.: %2, MuseScore Studio version (%3-bit): %4-%5, revision: github-musescore-musescore-%6")
         .arg(QSysInfo::prettyProductName()
@@ -95,6 +127,7 @@ void AboutModel::copyRevisionToClipboard() const
         .arg(application()->version().toString())
         .arg(application()->build())
         .arg(application()->revision()));
+#endif
 }
 
 void AboutModel::toggleDevMode()

@@ -86,6 +86,7 @@ class ExportDialogModel : public QAbstractListModel, public QQmlParserStatus, pu
 
     Q_PROPERTY(int sampleRate READ sampleRate WRITE setSampleRate NOTIFY sampleRateChanged)
     Q_PROPERTY(int bitRate READ bitRate WRITE setBitRate NOTIFY bitRateChanged)
+    Q_PROPERTY(QList<int> bitRateOptions READ availableBitRates NOTIFY availableBitRatesChanged)
     Q_PROPERTY(QVariantList availableSampleFormats READ availableSampleFormats NOTIFY availableSampleFormatsChanged)
     Q_PROPERTY(int selectedSampleFormat READ selectedSampleFormat WRITE setSelectedSampleFormat NOTIFY selectedSampleFormatChanged)
 
@@ -288,6 +289,7 @@ signals:
     void ffmpegDirChanged();
 
 private:
+    void ensureSupportedAudioBitRate();
     void classBegin() override;
     void componentComplete() override {}
     void init();

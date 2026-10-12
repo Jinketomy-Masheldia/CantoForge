@@ -100,7 +100,11 @@ void MainWindowTitleProvider::update()
     project::INotationProjectPtr project = context()->currentProject();
 
     if (!project) {
+#ifdef Q_OS_IOS
+        setTitle(QStringLiteral("CantoForge"));
+#else
         setTitle(muse::qtrc("appshell", "MuseScore Studio"));
+#endif
         setFilePath("");
         setFileModified(false);
         return;

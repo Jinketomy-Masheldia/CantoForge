@@ -61,7 +61,7 @@ static QQuickWindow* createStartupErrorWindow(QQmlApplicationEngine* engine, con
             height: 700
             visibility: Window.FullScreen
             color: "#242424"
-            title: "MuseScore Studio - Startup error"
+            title: "CantoForge - Startup error"
             function copyDiagnostics() {
                 errorText.selectAll()
                 errorText.copy()
@@ -116,7 +116,7 @@ static QQuickWindow* createStartupErrorWindow(QQmlApplicationEngine* engine, con
 
     const QString logPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
                             + "/" + QCoreApplication::applicationName() + "/Diagnostics";
-    const QString message = QObject::tr("MuseScore Studio could not load its interface.")
+    const QString message = QObject::tr("CantoForge could not load its interface.")
                             + "\n\n" + details + "\n\n" + QObject::tr("Logs are available in Files:")
                             + "\n" + logPath;
     QObject* object = fallback.createWithInitialProperties({ { "errorMessage", message } });

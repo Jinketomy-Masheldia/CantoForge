@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.1.0-alpha.1 — 2026-10-12
+
+- First experimental CantoForge release, based on MuseScore Studio 4.7.5.
+- Adopted the CantoForge name, independent icon and `com.jmx.cantoforge` identity.
+- Updated onboarding, About information and Simplified/Traditional Chinese text.
+- Disabled cloud publishing/save controls, welcome promotions and desktop update settings on iPad.
+- Used Apple AudioToolbox for iOS AAC export; FDK-AAC is not linked.
+- Removed local checkout paths from compiler records and excluded macOS metadata from IPA packaging.
+- Included matching application/dependency sources, build information and notices in the release materials.
+- See the earlier development entries below for the platform and input adaptations.
+
+## Release candidate preparation — 2026-10-11
+
+- Replaced the iOS FDK-AAC encoder with Apple AudioToolbox while retaining
+  AAC-LC/ADTS `.aac` export, streaming float PCM input and final-frame flushing.
+- Removed FDK-AAC from the iOS target's sources and link dependencies.
+- Made AAC bit rate choices reflect the system encoder's supported settings
+  and update when the sample rate or export format changes.
+- Added encoder finalization error reporting and a reproducible native AAC probe.
+- Added optional in-bundle application/dependency license notices for release builds.
+- Kept the existing desktop interface, app name, icon and bundle identifier.
+- Increased the candidate iPad bundle revision to 11; a public release tag
+  remains a separate maintainer action.
+
 ## Unreleased — publication snapshot, 2026-10-11
 
 Based on MuseScore Studio 4.7.5. The internal iPad bundle revisions 1–10

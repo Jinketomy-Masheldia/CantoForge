@@ -30,6 +30,10 @@ namespace muse::audio::encode {
 class AacEncoder : public AbstractAudioEncoder
 {
 public:
+#ifdef Q_OS_IOS
+    ~AacEncoder() override;
+    bool finalize() override;
+#endif
     bool init(const io::path_t& path, const SoundTrackFormat& format, const samples_t totalSamplesNumber) override;
 
     size_t encode(samples_t samplesPerChannel, const float* input) override;

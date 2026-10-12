@@ -70,6 +70,13 @@ public:
     virtual size_t encode(samples_t samplesPerChannel, const float* input) = 0;
     virtual size_t flush() = 0;
 
+    // Encoders that close a container during flushing can report finalization errors.
+    virtual bool finalize()
+    {
+        flush();
+        return true;
+    }
+
     Progress progress()
     {
         return m_progress;

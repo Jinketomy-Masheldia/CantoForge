@@ -26,8 +26,8 @@ Clone this repository with GitHub Desktop or Git and select the `ipad-port`
 branch, which is based on upstream tag `v4.7.5`:
 
 ```sh
-git clone --branch ipad-port https://github.com/Jinketomy-Masheldia/musescore-studio-ipad-port.git
-cd musescore-studio-ipad-port
+git clone --branch ipad-port https://github.com/Jinketomy-Masheldia/CantoForge.git
+cd CantoForge
 ```
 
 Run the commands below from the repository root. A GitHub source ZIP can
@@ -70,7 +70,7 @@ Adjust the paths if Qt is installed elsewhere:
 ```sh
 export QT_IOS_DIR="$HOME/Qt/6.11.2/ios"
 export QT_HOST_DIR="$HOME/Qt/6.11.2/macos"
-buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=10
+buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=14
 ```
 
 `QT_IOS_DIR/lib/cmake/Qt6/qt.toolchain.cmake` must exist. The helper configures
@@ -89,7 +89,7 @@ Outputs:
 | Output | Path |
 | --- | --- |
 | App bundle | `build/ios-device/src/app/mscore.app` |
-| Unsigned IPA | `build/ios-device/ipa/MuseScoreStudio-iPad-unsigned.ipa` |
+| Unsigned IPA | `build/ios-device/ipa/CantoForge-iPad-unsigned.ipa` |
 
 The helper overwrites the unsigned IPA output on a subsequent successful
 package. Preserve separately named copies when comparing builds.
@@ -98,27 +98,48 @@ Qt is linked statically. Bundled resources include MS Basic and FluidR3Mono
 SoundFonts, translations, templates and liblouis Braille tables. Desktop
 HarfBuzz/FreeType binaries are not used as iOS dependencies.
 
+AAC export on iOS uses Apple's system AudioToolbox encoder and retains the
+`.aac` ADTS format. The AAC export dialog queries the system codec and offers
+only supported bit rates for the chosen sample rate. FDK-AAC remains in the
+upstream source tree for other platforms and is not linked into the iOS app.
+
+For a public release candidate, install the matching **Qt Sources** component
+and include dependency notices in the bundle:
+
+```sh
+buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=14 \
+  -DMUE_IOS_INCLUDE_RELEASE_NOTICES=ON \
+  -DMUE_QT_SOURCE_DIR="$HOME/Qt/6.11.2/Src"
+```
+
+The notices are under `Payload/mscore.app/licenses` inside the IPA. The
+matching complete dependency sources must also accompany the release.
+
+To check the Apple AAC writer on macOS using the same backend source:
+
+```sh
+bash buildscripts/ios/check-aac.sh
+```
+
+This probe encodes and decodes audio, checks supported bit rates, irregular
+buffer sizes, final audio, a short stream, UTF-8 paths and failure paths.
+It requires access to the system audio codec registry; a restricted execution
+environment may not expose the codecs. It does not replace an iPad export test.
+
 Experimental MNX import/export is disabled by the helper because it needs
 an additional fetched dependency. It can be enabled explicitly with
 `-DMUE_BUILD_IMPEXP_MNX_MODULE=ON` after supplying that dependency. This has
 not been established as a tested iPad workflow.
 
-## 5. Optional bundle identifier
+## 5. Application identity
 
-The development default is `org.musescore.MuseScore.ipad`. To build with an
-identifier you control:
+The iPad app is named **CantoForge** and uses **com.jmx.cantoforge**. Its icons
+come from the maintainer-supplied logo under `buildscripts/packaging/iOS/icons`.
+The packaging helper expects this identity.
 
-```sh
-buildscripts/ios/build.sh device \
-  -DMUE_IOS_BUNDLE_IDENTIFIER=your.unique.bundle.identifier \
-  -DMUE_IOS_BUNDLE_VERSION=10
-```
-
-Use the same identifier for updates when you intend to preserve app data.
-Changing it may install a separate application; back up scores first. A
-public release should settle on its own identifier, name and artwork before
-users begin relying on that identity. Current source defaults and upstream
-branding have not been changed by documentation preparation.
+Use the same identifier for subsequent updates. The older personal development
+identifier was `org.musescore.MuseScore.ipad`; changing identifiers can install
+a separate app. Export or back up scores before deleting an older version.
 
 ## 6. Sign and install for personal testing
 

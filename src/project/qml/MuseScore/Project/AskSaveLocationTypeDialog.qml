@@ -79,6 +79,7 @@ StyledDialogView {
                 description: qsTrc("project/save", "Files are saved privately on your own personal account. \
 You can share drafts with others and publish your finished scores publicly too.")
                 buttonText: qsTrc("project/save", "Save to the cloud")
+                buttonEnabled: Qt.platform.os !== "ios"
 
                 imageSource: "images/Cloud.png"
 

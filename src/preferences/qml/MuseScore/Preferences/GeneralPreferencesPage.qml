@@ -120,9 +120,10 @@ PreferencesPage {
             }
         }*/
 
-        SeparatorLine { }
+        SeparatorLine { visible: Qt.platform.os !== "ios" }
 
         AutomaticUpdateSection {
+            visible: Qt.platform.os !== "ios"
             isAppUpdatable: preferencesModel.isAppUpdatable()
             needCheckForNewAppVersion: preferencesModel.needCheckForNewAppVersion
             museScorePrivacyPolicyUrl: preferencesModel.museScorePrivacyPolicyUrl()

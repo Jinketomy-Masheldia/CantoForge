@@ -1,6 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
-set(MUE_IOS_BUNDLE_IDENTIFIER "org.musescore.MuseScore.ipad" CACHE STRING "Personal iPad app bundle identifier")
+set(MUE_IOS_BUNDLE_IDENTIFIER "com.jmx.cantoforge" CACHE STRING "iPad app bundle identifier")
+# Migrate existing build directories that still cache the development identity.
+if(MUE_IOS_BUNDLE_IDENTIFIER STREQUAL "org.musescore.MuseScore.ipad")
+    set(MUE_IOS_BUNDLE_IDENTIFIER "com.jmx.cantoforge" CACHE STRING "iPad app bundle identifier" FORCE)
+endif()
 set(MUE_IOS_BUNDLE_VERSION "${CMAKE_BUILD_NUMBER}" CACHE STRING "Personal iPad app build revision")
+option(MUE_IOS_INCLUDE_RELEASE_NOTICES "Bundle dependency notices for a public IPA" OFF)
+set(MUE_QT_SOURCE_DIR "" CACHE PATH "Matching Qt Sources component")
 if(CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
     set(MUE_IOS_SUPPORTED_PLATFORM "iPhoneSimulator")
 else()
@@ -15,15 +21,32 @@ add_custom_command(TARGET MuseScoreStudio POST_BUILD
 set_target_properties(MuseScoreStudio PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_LIST_DIR}/Info.plist.in"
     MACOSX_BUNDLE_GUI_IDENTIFIER "${MUE_IOS_BUNDLE_IDENTIFIER}"
-    MACOSX_BUNDLE_BUNDLE_NAME "MuseScore Studio"
+    MACOSX_BUNDLE_BUNDLE_NAME "CantoForge"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${MUSE_APP_VERSION}"
     MACOSX_BUNDLE_BUNDLE_VERSION "${MUE_IOS_BUNDLE_VERSION}"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${MUE_IOS_BUNDLE_IDENTIFIER}"
     XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "2"
 )
 
+if(MUE_IOS_INCLUDE_RELEASE_NOTICES)
+    if(NOT EXISTS "${MUE_QT_SOURCE_DIR}/qtbase/.tag")
+        message(FATAL_ERROR "Set MUE_QT_SOURCE_DIR to the matching Qt Sources component for release notices.")
+    endif()
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    set(notices_script "${PROJECT_SOURCE_DIR}/buildscripts/ios/collect-notices.py")
+    set_property(TARGET MuseScoreStudio APPEND PROPERTY LINK_DEPENDS "${notices_script}")
+    add_custom_command(TARGET MuseScoreStudio POST_BUILD
+        COMMAND "${Python3_EXECUTABLE}" "${notices_script}"
+            --project "${PROJECT_SOURCE_DIR}"
+            --qt-source "${MUE_QT_SOURCE_DIR}"
+            --qt-kit "${QT_INSTALL_PREFIX}"
+            --harfbuzz-source "${MUE_HARFBUZZ_SOURCE_DIR}"
+            --output "$<TARGET_BUNDLE_DIR:MuseScoreStudio>/licenses"
+        VERBATIM)
+endif()
+
 # Precompiled PNG icons keep Ninja builds independent of CoreSimulator/actool.
-foreach(icon AppIcon60x60@2x.png AppIcon76x76@2x~ipad.png)
+foreach(icon AppIcon60x60@2x.png AppIcon76x76@2x~ipad.png AppIcon83.5x83.5@2x~ipad.png)
     set(icon_path "${CMAKE_CURRENT_LIST_DIR}/icons/${icon}")
     target_sources(MuseScoreStudio PRIVATE "${icon_path}")
     set_source_files_properties("${icon_path}" PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
