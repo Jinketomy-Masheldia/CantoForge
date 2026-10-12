@@ -281,8 +281,10 @@ private:
     bool m_loadCalled = false;
     std::unique_ptr<NotationViewInputController> m_inputController;
 #ifdef Q_OS_IOS
+    void setTouchEditDrag(bool enabled);
     std::unique_ptr<QMouseEvent> m_touchPress;
-    bool m_touchCanvasDrag = false;
+    bool m_touchCanEditDrag = false;
+    Qt::MouseButton m_touchDragButton = Qt::NoButton;
     QPointF m_touchDragPosition;
 #endif
     std::unique_ptr<PlaybackCursor> m_playbackCursor;

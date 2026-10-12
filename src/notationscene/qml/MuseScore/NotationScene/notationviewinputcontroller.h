@@ -125,6 +125,7 @@ public:
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
     void mouseDoubleClickEvent(QMouseEvent* event);
+    bool canStartTouchEditDrag(const QPointF& position) const;
     void hoverMoveEvent(QHoverEvent* event);
     void hoverLeaveEvent(QHoverEvent* event);
     bool shortcutOverrideEvent(QKeyEvent* event);

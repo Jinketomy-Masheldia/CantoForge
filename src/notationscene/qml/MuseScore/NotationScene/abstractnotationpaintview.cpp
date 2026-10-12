@@ -26,6 +26,7 @@
 #include <QMimeData>
 #ifdef Q_OS_IOS
 #include <QInputMethod>
+#include <QQuickWindow>
 #endif
 
 #include "async/async.h"
@@ -44,8 +45,13 @@ using namespace muse::actions;
 static constexpr qreal SCROLL_LIMIT_OFF_OVERSCROLL_FACTOR = 0.75;
 
 #ifdef Q_OS_IOS
-static bool isTouchMouseEvent(const QMouseEvent* event)
+static bool isTouchMouseEvent(const QMouseEvent* event, const QQuickWindow* window)
 {
+    // Qt iOS reports indirect pointer presses through its touchscreen too.
+    // UIKit records their origin before Qt converts them to mouse events.
+    if (window && window->property("museIosIndirectPointer").toBool()) {
+        return false;
+    }
     return event->pointingDevice()->type() == QInputDevice::DeviceType::TouchScreen
            || (event->source() == Qt::MouseEventSynthesizedByQt
                && event->pointingDevice()->type() == QInputDevice::DeviceType::Mouse);
@@ -1261,6 +1267,16 @@ void AbstractNotationPaintView::onElementPopupIsOpenChanged(const PopupModelType
     m_currentElementPopupType = popupType;
 }
 
+#ifdef Q_OS_IOS
+void AbstractNotationPaintView::setTouchEditDrag(bool enabled)
+{
+    m_touchCanEditDrag = enabled;
+    if (window()) {
+        window()->setProperty("museTouchDragEditing", enabled);
+    }
+}
+#endif
+
 void AbstractNotationPaintView::mousePressEvent(QMouseEvent* event)
 {
     TRACEFUNC;
@@ -1268,11 +1284,13 @@ void AbstractNotationPaintView::mousePressEvent(QMouseEvent* event)
 
 #ifdef Q_OS_IOS
     m_touchPress.reset();
-    m_touchCanvasDrag = false;
-    if (event->button() == Qt::LeftButton && isTouchMouseEvent(event)) {
-        // Decide only the canvas action on release/movement. Qt still receives
-        // every touch event immediately, so pinch and scroll grabs stay intact.
+    m_touchDragButton = Qt::NoButton;
+    setTouchEditDrag(false);
+    if (event->button() == Qt::LeftButton && isTouchMouseEvent(event, window())) {
+        // Decide between editing and panning on movement; commit taps on
+        // release. Qt still receives touches immediately for pinch gestures.
         m_touchPress.reset(event->clone());
+        setTouchEditDrag(isInited() && m_inputController->canStartTouchEditDrag(event->position()));
         return;
     }
 #endif
@@ -1289,19 +1307,19 @@ void AbstractNotationPaintView::mouseMoveEvent(QMouseEvent* event)
         if ((event->position() - m_touchPress->position()).manhattanLength() <= 4) {
             return;
         }
+        m_touchDragButton = m_touchCanEditDrag ? Qt::LeftButton : Qt::MiddleButton;
         if (isInited()) {
             QMouseEvent press(QEvent::MouseButtonPress, m_touchPress->position(), m_touchPress->globalPosition(),
-                              Qt::MiddleButton, Qt::MiddleButton, m_touchPress->modifiers());
+                              m_touchDragButton, m_touchDragButton, m_touchPress->modifiers());
             m_inputController->mousePressEvent(&press);
         }
         m_touchPress.reset();
-        m_touchCanvasDrag = true;
     }
-    if (m_touchCanvasDrag) {
+    if (m_touchDragButton != Qt::NoButton) {
         m_touchDragPosition = event->position();
         if (isInited()) {
             QMouseEvent move(QEvent::MouseMove, event->position(), event->globalPosition(),
-                             Qt::NoButton, Qt::MiddleButton, event->modifiers());
+                             Qt::NoButton, m_touchDragButton, event->modifiers());
             m_inputController->mouseMoveEvent(&move);
         }
         return;
@@ -1318,10 +1336,11 @@ void AbstractNotationPaintView::mouseDoubleClickEvent(QMouseEvent* event)
     forceFocusIn();
 
 #ifdef Q_OS_IOS
-    if (event->button() == Qt::LeftButton && isTouchMouseEvent(event)) {
+    if (event->button() == Qt::LeftButton && isTouchMouseEvent(event, window())) {
         // Commit the second tap on release too, including its double-click action.
         m_touchPress.reset(event->clone());
-        m_touchCanvasDrag = false;
+        m_touchDragButton = Qt::NoButton;
+        setTouchEditDrag(isInited() && m_inputController->canStartTouchEditDrag(event->position()));
         return;
     }
 #endif
@@ -1333,6 +1352,7 @@ void AbstractNotationPaintView::mouseDoubleClickEvent(QMouseEvent* event)
 void AbstractNotationPaintView::mouseReleaseEvent(QMouseEvent* event)
 {
 #ifdef Q_OS_IOS
+    setTouchEditDrag(false);
     if (m_touchPress) {
         auto press = std::move(m_touchPress);
         if (isInited()) {
@@ -1341,11 +1361,12 @@ void AbstractNotationPaintView::mouseReleaseEvent(QMouseEvent* event)
                 m_inputController->mouseDoubleClickEvent(press.get());
             }
         }
-    } else if (m_touchCanvasDrag) {
-        m_touchCanvasDrag = false;
+    } else if (m_touchDragButton != Qt::NoButton) {
+        const Qt::MouseButton button = m_touchDragButton;
+        m_touchDragButton = Qt::NoButton;
         if (isInited()) {
             QMouseEvent release(QEvent::MouseButtonRelease, event->position(), event->globalPosition(),
-                                Qt::MiddleButton, Qt::NoButton, event->modifiers());
+                                button, Qt::NoButton, event->modifiers());
             m_inputController->mouseReleaseEvent(&release);
         }
         return;
@@ -1360,14 +1381,16 @@ void AbstractNotationPaintView::mouseReleaseEvent(QMouseEvent* event)
 void AbstractNotationPaintView::mouseUngrabEvent()
 {
     // Long press, a second finger, or PinchArea taking the grab must not commit
-    // a pending note/selection or leave the canvas in its dragging state.
+    // a pending note/selection or leave an edit/undo transaction open.
     m_touchPress.reset();
-    if (m_touchCanvasDrag && isInited()) {
+    setTouchEditDrag(false);
+    const Qt::MouseButton button = m_touchDragButton;
+    m_touchDragButton = Qt::NoButton;
+    if (button != Qt::NoButton && isInited()) {
         QMouseEvent release(QEvent::MouseButtonRelease, m_touchDragPosition, mapToGlobal(m_touchDragPosition),
-                            Qt::MiddleButton, Qt::NoButton, Qt::NoModifier);
+                            button, Qt::NoButton, Qt::NoModifier);
         m_inputController->mouseReleaseEvent(&release);
     }
-    m_touchCanvasDrag = false;
     QQuickPaintedItem::mouseUngrabEvent();
 }
 #endif

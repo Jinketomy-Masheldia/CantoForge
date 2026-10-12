@@ -648,6 +648,30 @@ void NotationViewInputController::wheelEvent(QWheelEvent* event)
     }
 }
 
+bool NotationViewInputController::canStartTouchEditDrag(const QPointF& position) const
+{
+    if (m_readonly || m_view->isNoteEnterMode() || playbackController()->isPlaying()) {
+        return false;
+    }
+
+    const INotationInteractionPtr interaction = viewInteraction();
+    if (!interaction) {
+        return false;
+    }
+
+    const PointF logicalPosition = m_view->toLogical(position);
+    // A grip can be outside the element's bounding box: test it first.
+    if (interaction->isHitGrip(logicalPosition)) {
+        return true;
+    }
+
+    const EngravingItem* element = interaction->hitElement(logicalPosition, hitWidth());
+    // A swipe across an unselected element (or a selected measure range)
+    // scrolls. A selected object follows the desktop editing path.
+    return element && element->selected() && !interaction->selection()->isRange()
+           && (element->isMovable() || interaction->isEditingElement());
+}
+
 void NotationViewInputController::mousePressEvent(QMouseEvent* event)
 {
     PointF logicPos = m_view->toLogical(event->pos());

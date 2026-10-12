@@ -5,5 +5,5 @@ class QQuickWindow;
 
 namespace muse::ui {
 // Install once on the UIKit view backing each Qt window.
-void installIosSecondaryClick(QQuickWindow* window);
+void installIosPointerSupport(QQuickWindow* window);
 }

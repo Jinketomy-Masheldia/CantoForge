@@ -10,6 +10,41 @@
 #include <QQuickWindow>
 #include <QTimer>
 
+// Observe the input kind before Qt puts both finger and indirect pointer
+// presses into the same touchscreen stream. Never recognize, delay or cancel
+// touches: Qt keeps ownership of primary clicks, dragging and double clicks.
+@interface MusePointerOriginObserver : UITapGestureRecognizer <UIGestureRecognizerDelegate> {
+    QPointer<QQuickWindow> _qtWindow;
+}
+- (instancetype)initWithQtWindow:(QQuickWindow*)window;
+@end
+
+@implementation MusePointerOriginObserver
+- (instancetype)initWithQtWindow:(QQuickWindow*)window
+{
+    self = [super initWithTarget:nil action:nil];
+    if (self) {
+        _qtWindow = window;
+        self.delegate = self;
+        self.allowedTouchTypes = @[@(UITouchTypeDirect), @(UITouchTypeIndirect),
+                                   @(UITouchTypePencil), @(UITouchTypeIndirectPointer)];
+        self.requiresExclusiveTouchType = NO;
+        self.cancelsTouchesInView = NO;
+        self.delaysTouchesBegan = NO;
+        self.delaysTouchesEnded = NO;
+    }
+    return self;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer*)recognizer shouldReceiveTouch:(UITouch*)touch
+{
+    if (_qtWindow) {
+        _qtWindow->setProperty("museIosIndirectPointer", touch.type == UITouchTypeIndirectPointer);
+    }
+    return NO;
+}
+@end
+
 // Qt's iOS view handles pointer hover, but does not preserve UIKit's
 // secondary button mask in its touch-to-mouse conversion. Recognize only
 // indirect secondary clicks before they reach that conversion.
@@ -83,18 +118,30 @@
 }
 @end
 
-void muse::ui::installIosSecondaryClick(QQuickWindow* window)
+void muse::ui::installIosPointerSupport(QQuickWindow* window)
 {
     UIView* view = (__bridge UIView*)reinterpret_cast<void*>(window->winId());
     if (!view) {
         return;
     }
+    bool hasOriginObserver = false;
+    bool hasSecondaryClick = false;
     for (UIGestureRecognizer* recognizer in view.gestureRecognizers) {
+        if ([recognizer isKindOfClass:MusePointerOriginObserver.class]) {
+            hasOriginObserver = true;
+        }
         if ([recognizer isKindOfClass:MuseSecondaryClick.class]) {
-            return;
+            hasSecondaryClick = true;
         }
     }
-    MuseSecondaryClick* recognizer = [[MuseSecondaryClick alloc] initWithQtWindow:window];
-    [view addGestureRecognizer:recognizer];
-    [recognizer release];
+    if (!hasOriginObserver) {
+        MusePointerOriginObserver* observer = [[MusePointerOriginObserver alloc] initWithQtWindow:window];
+        [view addGestureRecognizer:observer];
+        [observer release];
+    }
+    if (!hasSecondaryClick) {
+        MuseSecondaryClick* recognizer = [[MuseSecondaryClick alloc] initWithQtWindow:window];
+        [view addGestureRecognizer:recognizer];
+        [recognizer release];
+    }
 }

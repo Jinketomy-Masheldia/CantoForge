@@ -36,6 +36,16 @@ prerequisite for submitting a useful report. Test with copies of scores.
 - Open/close About, score creation, export and other dialogs.
 - Open File → Open Recent; repeatedly switch submenu rows, then dismiss outside.
 - Drag the score with a finger, tap notes, and long-press for a context menu.
+- Tap a movable element to select it, then drag it with a finger. The element
+  should move without panning the page. Undo and redo the edit.
+- Select a slur/tie and drag each square grip to adjust its shape. Also check
+  that a swipe on blank canvas or an unselected element still pans normally.
+- Hold a selected element/grip before dragging: a context menu must not take
+  over that edit gesture. Long-press an unselected element for its context menu.
+- With a mouse, press an unselected movable element and drag without releasing
+  the button. Check grip dragging, double-click text editing and secondary click.
+- Add a second finger while dragging, then resume scrolling/editing. The
+  interrupted drag must finish cleanly and remain undoable.
 - In note input, check that a drag or long press does not insert an extra note.
 
 ## Priority 3: additional coverage

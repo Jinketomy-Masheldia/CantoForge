@@ -17,6 +17,11 @@
 namespace muse::ui {
 static constexpr int HOLD_INTERVAL = 600;
 
+static bool isEditingTouchDrag(QQuickWindow* window)
+{
+    return window && window->property("museTouchDragEditing").toBool();
+}
+
 class HoldIndicator : public QQuickPaintedItem
 {
 public:
@@ -71,6 +76,10 @@ void IosTouchController::begin(QQuickWindow* window, QTouchEvent* event)
 {
     reset();
     m_window = window;
+    // The view sets this for the new press after Qt synthesizes its mouse
+    // event. A window property also works with touchscreen exclusive grabs,
+    // which are not exposed by QQuickWindow::mouseGrabberItem().
+    window->setProperty("museTouchDragEditing", false);
     m_position = event->point(0).position();
     m_globalPosition = event->point(0).globalPosition();
     m_modifiers = event->modifiers();
@@ -90,7 +99,7 @@ void IosTouchController::begin(QQuickWindow* window, QTouchEvent* event)
 
 void IosTouchController::updateIndicator()
 {
-    if (!m_window || !m_indicator) {
+    if (!m_window || !m_indicator || isEditingTouchDrag(m_window)) {
         reset();
         return;
     }
@@ -100,7 +109,7 @@ void IosTouchController::updateIndicator()
 
 void IosTouchController::recognizeHold()
 {
-    if (!m_pendingBegin || !m_window || !m_window->isVisible()) {
+    if (!m_pendingBegin || !m_window || !m_window->isVisible() || isEditingTouchDrag(m_window)) {
         reset();
         return;
     }
@@ -160,7 +169,7 @@ bool IosTouchController::eventFilter(QObject* watched, QEvent* event)
     }
 #ifdef Q_OS_IOS
     if (event->type() == QEvent::Show) {
-        installIosSecondaryClick(window);
+        installIosPointerSupport(window);
     }
     if (event->type() == QEvent::Show || event->type() == QEvent::WindowActivate) {
         // Apply after UIKit has attached the Qt view to its native window.
@@ -179,7 +188,8 @@ bool IosTouchController::eventFilter(QObject* watched, QEvent* event)
     if (event->type() == QEvent::TouchBegin) {
         auto* touch = static_cast<QTouchEvent*>(event);
         // Menus own their touch selection; holding a menu row is not a right click.
-        if (window->property("museImmediateTouch").toBool()) {
+        if (window->property("museImmediateTouch").toBool()
+            || window->property("museIosIndirectPointer").toBool()) {
             reset();
             return false;
         }
