@@ -41,7 +41,11 @@ prerequisite for submitting a useful report. Test with copies of scores.
   that grip must not open a context menu; holding the row body still should.
 - Open Clefs and drag a symbol horizontally toward the score, then move it
   freely and drop it. Tap a symbol and drag its corner grip to reorder it in
-  the palette. Check the same gestures in the More popup and with a mouse.
+  an editable palette: the original symbol follows the finger, the target cell
+  is outlined, and the order changes only on release. Check first-to-last and
+  last-to-first moves, a grip tap, release outside the grid, and touch cancellation.
+  Read-only grids must not show a reorder grip. Check the More popup and mouse
+  dragging separately; use the symbol body to drag onto the score.
 - Drag the score with a finger, tap notes, and long-press for a context menu.
 - Tap a movable element to select it, then drag it with a finger. The element
   should move without panning the page. Undo and redo the edit.

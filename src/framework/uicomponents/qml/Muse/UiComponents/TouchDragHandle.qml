@@ -8,6 +8,7 @@ MouseArea {
     property Item dragTarget
     property bool touchPress: false
     signal dragPressed(var mouse)
+    signal dragMoved(var mouse)
     signal dragReleased()
     signal dragCanceled()
 
@@ -27,6 +28,7 @@ MouseArea {
         }
         root.dragPressed(mouse)
     }
+    onPositionChanged: function(mouse) { root.dragMoved(mouse) }
     onReleased: {
         root.dragReleased()
         if (touchPress) {
