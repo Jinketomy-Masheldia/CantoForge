@@ -13,6 +13,10 @@ AppWindow {
     minimumWidth: 0
     minimumHeight: 0
 
+    // Qt 6.9+ reserves the home-indicator safe area below the content item.
+    // Keep the desktop status bar at the bottom of the fullscreen iPad window.
+    bottomPadding: 0
+
     Loader {
         id: appMenuBar
         anchors.top: parent.top

@@ -112,8 +112,12 @@ if (OS_IS_IOS)
         internal/platform/ios/iostouchcontroller.h
         internal/platform/ios/iospointerbridge.mm
         internal/platform/ios/iospointerbridge.h
+        internal/platform/ios/iosgesturebridge.mm
+        internal/platform/ios/iosgesturebridge.h
     )
-    set_source_files_properties(internal/platform/ios/iospointerbridge.mm PROPERTIES
+    set_source_files_properties(
+        internal/platform/ios/iospointerbridge.mm
+        internal/platform/ios/iosgesturebridge.mm PROPERTIES
         SKIP_UNITY_BUILD_INCLUSION ON
         SKIP_PRECOMPILE_HEADERS ON
     )

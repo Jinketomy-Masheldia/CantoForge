@@ -11,6 +11,7 @@
 
 #ifdef Q_OS_IOS
 #include "iospointerbridge.h"
+#include "iosgesturebridge.h"
 #endif
 
 namespace muse::ui {
@@ -160,6 +161,14 @@ bool IosTouchController::eventFilter(QObject* watched, QEvent* event)
 #ifdef Q_OS_IOS
     if (event->type() == QEvent::Show) {
         installIosSecondaryClick(window);
+    }
+    if (event->type() == QEvent::Show || event->type() == QEvent::WindowActivate) {
+        // Apply after UIKit has attached the Qt view to its native window.
+        QTimer::singleShot(0, window, [window = QPointer<QQuickWindow>(window)] {
+            if (window && window->isVisible()) {
+                installIosGestureProtection(window);
+            }
+        });
     }
 #endif
     if (window == m_window && (event->type() == QEvent::Hide
