@@ -36,8 +36,6 @@ Item {
     property bool editingEnabled: true
     property bool custom: false
     property bool unresolved: false
-    property int touchDragHandleWidth: 0
-    property alias touchDragHandleContainer: touchDragHandleContainer
 
     property bool isInVisibleArea: true
 
@@ -93,20 +91,11 @@ Item {
         horizontalAlignment: Text.AlignLeft
         anchors {
             left: paletteExpandArrow.right; leftMargin: 4;
-            right: touchDragHandleContainer.left
+            right: deleteButton.visible ? deleteButton.left : (menuButton.visible ? menuButton.left : parent.right)
         }
 
         text: root.text
         font: ui.theme.bodyBoldFont
-    }
-
-    Item {
-        id: touchDragHandleContainer
-        z: 1001
-        width: root.touchDragHandleWidth
-        height: parent.height
-        anchors.right: deleteButton.visible ? deleteButton.left : (menuButton.visible ? menuButton.left : parent.right)
-        visible: width > 0 && !root.unresolved
     }
 
     FlatButton {

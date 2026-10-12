@@ -211,79 +211,6 @@ StyledGridView {
         interval: 400
     }
 
-    // A touch handle only reorders this grid. Do not start QDrag: its iOS
-    // fallback depends on mouse events and creates a separate feedback window.
-    // Keep the source delegate in place until release so its touch grab survives.
-    QtObject {
-        id: touchReorder
-        property int sourceRow: -1
-        property int targetRow: -1
-        property bool active: false
-
-        function begin(cell) {
-            sourceRow = cell.rowIndex
-            targetRow = -1
-            active = false
-            touchReorderPreview.icon = cell.model.decoration
-            const origin = cell.mapToItem(ui.rootItem, 0, 0)
-            touchReorderPreview.x = origin.x
-            touchReorderPreview.y = origin.y
-        }
-
-        function update(position) {
-            if (!active) {
-                return
-            }
-            // indexAt() uses content coordinates, not viewport coordinates.
-            if (position.x < 0 || position.x >= paletteView.width
-                    || position.y < 0 || position.y >= paletteView.height) {
-                targetRow = -1
-                return
-            }
-            const morePosition = paletteView.mapToItem(moreButtonRect, position.x, position.y)
-            if (moreButtonRect.visible && morePosition.x >= 0 && morePosition.x < moreButtonRect.width
-                    && morePosition.y >= 0 && morePosition.y < moreButtonRect.height) {
-                targetRow = -1
-                return
-            }
-            targetRow = paletteView.indexAt(position.x + paletteView.contentX,
-                                            position.y + paletteView.contentY)
-        }
-
-        function finish(commit) {
-            const source = sourceRow
-            const destination = targetRow
-            const shouldMove = commit && active && source >= 0 && destination >= 0
-                    && source !== destination && paletteView.paletteController.canEdit(paletteView.paletteRootIndex)
-            active = false
-            sourceRow = -1
-            targetRow = -1
-            // Moving model rows destroys/recreates delegates. Wait until the
-            // MouseArea has completed release before doing that.
-            if (shouldMove) {
-                Qt.callLater(paletteView.moveCell, source, destination)
-            }
-        }
-    }
-
-    IconView {
-        id: touchReorderPreview
-        parent: ui.rootItem
-        width: paletteView.cellWidth
-        height: paletteView.cellHeight
-        visible: touchReorder.active
-        enabled: false
-        z: 1000000
-        opacity: 0.85
-        backgroundColor: ui.theme.textFieldColor
-        Rectangle {
-            anchors.fill: parent
-            color: "transparent"
-            border.color: ui.theme.accentColor
-            border.width: 2
-        }
-    }
-
     PaletteGridLinesCanvas {
         id: grid
         z: 1
@@ -295,21 +222,6 @@ StyledGridView {
         cellWidth: parent.cellWidth
         cellHeight: parent.cellHeight
 
-        Rectangle {
-            readonly property Item targetCell: touchReorder.active && touchReorder.targetRow >= 0
-                                               ? paletteView.itemAtIndex(touchReorder.targetRow) : null
-            readonly property point targetPosition: targetCell ? targetCell.mapToItem(grid, 0, 0) : Qt.point(0, 0)
-            visible: targetCell !== null
-            x: targetPosition.x
-            y: targetPosition.y
-            width: paletteView.cellWidth
-            height: paletteView.cellHeight
-            color: Utils.colorWithAlpha(ui.theme.accentColor, 0.15)
-            border.color: ui.theme.accentColor
-            border.width: 2
-            z: 2
-        }
-
         DropArea {
             id: paletteDropArea
             anchors.fill: parent
@@ -319,6 +231,10 @@ StyledGridView {
             property bool internal: false
 
             function onDrag(drag) {
+                if (drag.source && drag.source.touchDrag) {
+                    drag.accepted = false;
+                    return;
+                }
                 if (drag.proposedAction !== proposedAction) {
                     onEntered(drag);
                     return;
@@ -349,6 +265,16 @@ StyledGridView {
 
             onEntered: function(drag) {
                 onDragOverPaletteFinished();
+
+                // A finger can drag a symbol onto the score, but palette
+                // editing/reordering is reserved for the mouse.
+                if (drag.source && drag.source.touchDrag) {
+                    action = Qt.IgnoreAction;
+                    internal = false;
+                    proposedAction = drag.proposedAction;
+                    drag.accepted = false;
+                    return;
+                }
 
                 // first check if controller allows dropping this item here
                 const mimeData = PaletteUtils.dropEventMimeData(drag);
@@ -651,7 +577,6 @@ StyledGridView {
                 anchors.fill: parent
                 icon: paletteCell.model.decoration
                 visible: !parent.paletteDrag || parent.dragCopy
-                opacity: touchReorder.active && touchReorder.sourceRow === paletteCell.rowIndex ? 0.35 : 1
             }
 
             hint: model.toolTip
@@ -661,8 +586,8 @@ StyledGridView {
             // leftClickArea
             mouseArea.drag.target: cellDragGesture.dragAllowed ? draggedIcon : null
             mouseArea.preventStealing: cellDragGesture.preventStealing
+            readonly property bool touchDrag: cellDragGesture.touchPress
             property bool dragActive: mouseArea.drag.active
-                                      || (!cellTouchDragHandle.reorderTouch && cellTouchDragHandle.drag.active)
             onDragActiveChanged: {
                 if (!ui.isSystemDragSupported) {
                     draggedIcon.Drag.mimeData = model.mimeData
@@ -694,56 +619,6 @@ StyledGridView {
                 allowHorizontalTouchDrag: true
             }
 
-            TouchDragHandle {
-                id: cellTouchDragHandle
-                property bool reorderTouch: false
-                property bool handleDragActive: drag.active
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                width: Math.min(24, parent.width / 2)
-                height: Math.min(24, parent.height / 2)
-                visible: Qt.platform.os === "ios" && paletteCell.isSelected && paletteCell.model.editable
-                         && paletteView.paletteController.canEdit(paletteView.paletteRootIndex)
-                dragTarget: reorderTouch ? touchReorderPreview : draggedIcon
-                z: 2
-                onDragPressed: function(mouse) {
-                    // Already selected: clearing/reselecting here hides the
-                    // handle during its own press and cancels the touch grab.
-                    reorderTouch = ui.isTouchInput(paletteCell)
-                    if (reorderTouch) {
-                        touchReorder.begin(paletteCell)
-                    } else {
-                        paletteCell.beginDrag(cellTouchDragHandle.mapToItem(paletteCell, mouse.x, mouse.y))
-                    }
-                }
-                onHandleDragActiveChanged: {
-                    if (reorderTouch && handleDragActive) {
-                        touchReorder.active = true
-                        touchReorder.update(mapToItem(paletteView, mouseX, mouseY))
-                    }
-                }
-                onDragMoved: function(mouse) {
-                    if (reorderTouch) {
-                        touchReorder.update(mapToItem(paletteView, mouse.x, mouse.y))
-                    }
-                }
-                onDragReleased: {
-                    if (reorderTouch) {
-                        touchReorder.update(mapToItem(paletteView, mouseX, mouseY))
-                        touchReorder.finish(true)
-                    } else {
-                        paletteCell.endDrag()
-                    }
-                }
-                onDragCanceled: {
-                    if (reorderTouch) {
-                        touchReorder.finish(false)
-                    } else {
-                        paletteCell.endDrag()
-                    }
-                }
-            }
-
             onClicked: {
                 Qt.callLater(paletteView.paletteController.applyPaletteElement, paletteCell.modelIndex, ui.keyboardModifiers())
 
@@ -759,7 +634,7 @@ StyledGridView {
             }
 
             Drag.dragType: ui.isSystemDragSupported ? Drag.Automatic : Drag.Internal
-            Drag.supportedActions: Qt.CopyAction | (model.editable ? Qt.MoveAction : 0)
+            Drag.supportedActions: Qt.CopyAction | (!touchDrag && model.editable ? Qt.MoveAction : 0)
             Drag.mimeData: Drag.active ? model.mimeData : {}
             CppDrag.active: Drag.active
             CppDrag.mimeData: Drag.mimeData

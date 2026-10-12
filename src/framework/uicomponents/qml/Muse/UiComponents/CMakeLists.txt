@@ -153,7 +153,6 @@ qt_add_qml_module(muse_uicomponents_qml
         TextInputField.qml
         TimeInputField.qml
         ToggleButton.qml
-        TouchDragHandle.qml
         Utils.mjs
         ValueAdjustControl.qml
         ValueList.qml

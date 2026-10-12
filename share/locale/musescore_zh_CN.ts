@@ -38752,11 +38752,4 @@ failed: %2</source>
         <translation>名称已存在</translation>
     </message>
 </context>
-<context>
-    <name>cantoforge/touch</name>
-    <message>
-        <source>Drag to move or reorder</source>
-        <translation>拖动以移动或调整顺序</translation>
-    </message>
-</context>
 </TS>

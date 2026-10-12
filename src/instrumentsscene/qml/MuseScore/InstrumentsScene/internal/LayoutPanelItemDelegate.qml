@@ -64,8 +64,7 @@ FocusableControl {
     QtObject {
         id: prv
 
-        property bool dragged: (root.mouseArea.drag.active && root.mouseArea.pressed)
-                               || (touchDragHandle.drag.active && touchDragHandle.pressed)
+        property bool dragged: root.mouseArea.drag.active && root.mouseArea.pressed
 
         onDraggedChanged: {
             if (dragged) {
@@ -118,21 +117,6 @@ FocusableControl {
         id: rowDragGesture
         mouseArea: root.mouseArea
         item: root
-    }
-
-    TouchDragHandle {
-        id: touchDragHandle
-        anchors.right: parent.right
-        anchors.rightMargin: root.sideMargin
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height
-        visible: Qt.platform.os === "ios" && root.isSelectable
-        dragTarget: root
-        drag.axis: Drag.YAxis
-        z: 1
-        onDragPressed: function(mouse) {
-            root.clicked(mouse)
-        }
     }
 
     Keys.onShortcutOverride: function(event) {
@@ -225,7 +209,7 @@ FocusableControl {
 
         anchors.fill: parent
         anchors.leftMargin: root.sideMargin
-        anchors.rightMargin: root.sideMargin + (touchDragHandle.visible ? touchDragHandle.width : 0)
+        anchors.rightMargin: root.sideMargin
 
         navigationPanel: root.navigation.panel
         navigationRow: root.navigation.row

@@ -555,8 +555,7 @@ StyledListView {
 
             width: ListView.view.width
 
-            Drag.active: paletteTree.paletteProvider.isPaletteDragEnabled
-                         && (paletteHeaderDragArea.drag.active || paletteHeaderTouchHandle.drag.active)
+            Drag.active: paletteHeaderDragArea.drag.active && paletteTree.paletteProvider.isPaletteDragEnabled
             Drag.dragType: Drag.Automatic
             Drag.supportedActions: Qt.MoveAction
             Drag.proposedAction: Qt.MoveAction
@@ -658,7 +657,6 @@ StyledListView {
                     custom: control.model.custom
 
                     unresolved: control.DelegateModel.isUnresolved
-                    touchDragHandleWidth: Qt.platform.os === "ios" && paletteTree.paletteProvider.isPaletteDragEnabled ? 32 : 0
 
                     onToggleExpandRequested: {
                         paletteTree.currentIndex = control.rowIndex;
@@ -707,24 +705,6 @@ StyledListView {
                         id: headerDragGesture
                         mouseArea: paletteHeaderDragArea
                         item: paletteHeader
-                    }
-
-                    Item { id: headerTouchDragTarget }
-
-                    TouchDragHandle {
-                        id: paletteHeaderTouchHandle
-                        parent: paletteHeader.touchDragHandleContainer
-                        anchors.fill: parent
-                        dragTarget: headerTouchDragTarget
-                        drag.axis: Drag.YAxis
-                        onDragPressed: function(mouse) {
-                            const hotSpot = paletteHeaderTouchHandle.mapToItem(control, mouse.x, mouse.y)
-                            control.grabToImage(function(result) {
-                                control.Drag.imageSource = result.url
-                                control.Drag.hotSpot.x = hotSpot.x
-                                control.Drag.hotSpot.y = hotSpot.y
-                            })
-                        }
                     }
                 }
 
