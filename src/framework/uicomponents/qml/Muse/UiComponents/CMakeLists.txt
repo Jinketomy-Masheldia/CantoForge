@@ -118,6 +118,7 @@ qt_add_qml_module(muse_uicomponents_qml
         NumberInputField.qml
         PageIndicator.qml
         PageTabButton.qml
+        PanelDragGesture.qml
         PopupPanel.qml
         ProgressBar.qml
         ProgressButton.qml
@@ -152,6 +153,7 @@ qt_add_qml_module(muse_uicomponents_qml
         TextInputField.qml
         TimeInputField.qml
         ToggleButton.qml
+        TouchDragHandle.qml
         Utils.mjs
         ValueAdjustControl.qml
         ValueList.qml

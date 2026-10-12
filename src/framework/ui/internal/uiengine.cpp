@@ -30,6 +30,7 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QQuickWindow>
+#include <QPointer>
 
 #include "global/types/color.h"
 #include "graphicsapiprovider.h"
@@ -186,6 +187,30 @@ std::shared_ptr<InteractiveProvider> UiEngine::interactiveProvider() const
 Qt::KeyboardModifiers UiEngine::keyboardModifiers() const
 {
     return QGuiApplication::keyboardModifiers();
+}
+
+bool UiEngine::isTouchInput(QQuickItem* item) const
+{
+#ifdef Q_OS_IOS
+    return item && item->window() && !item->window()->property("museIosIndirectPointer").toBool();
+#else
+    Q_UNUSED(item);
+    return false;
+#endif
+}
+
+void UiEngine::setTouchDragEditing(QQuickItem* item, bool editing)
+{
+    if (item && item->window()) {
+        item->window()->setProperty("museTouchDragEditing", editing);
+    }
+}
+
+void UiEngine::watchTouchDrag(QQuickItem* item, QObject* candidate)
+{
+    if (item && item->window()) {
+        item->window()->setProperty("museTouchDragCandidate", QVariant::fromValue(QPointer<QObject>(candidate)));
+    }
 }
 
 Qt::LayoutDirection UiEngine::currentLanguageLayoutDirection() const

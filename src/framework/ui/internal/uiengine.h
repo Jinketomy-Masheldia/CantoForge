@@ -80,6 +80,9 @@ public:
     std::shared_ptr<InteractiveProvider> interactiveProvider() const;
 
     Q_INVOKABLE Qt::KeyboardModifiers keyboardModifiers() const;
+    Q_INVOKABLE bool isTouchInput(QQuickItem* item) const;
+    Q_INVOKABLE void setTouchDragEditing(QQuickItem* item, bool editing);
+    Q_INVOKABLE void watchTouchDrag(QQuickItem* item, QObject* candidate);
     Q_INVOKABLE Qt::LayoutDirection currentLanguageLayoutDirection() const;
 
     Q_INVOKABLE QColor colorWithAlphaF(const QColor& src, float alpha /* 0 - 1 */) const;

@@ -570,8 +570,9 @@ StyledGridView {
             navigation.accessible.name: model.accessibleText
 
             // leftClickArea
-            mouseArea.drag.target: draggedIcon
-            property bool dragActive: mouseArea.drag.active
+            mouseArea.drag.target: cellDragGesture.dragAllowed ? draggedIcon : null
+            mouseArea.preventStealing: cellDragGesture.preventStealing
+            property bool dragActive: mouseArea.drag.active || cellTouchDragHandle.drag.active
             onDragActiveChanged: {
                 if (!ui.isSystemDragSupported) {
                     draggedIcon.Drag.mimeData = model.mimeData
@@ -582,15 +583,42 @@ StyledGridView {
             }
 
             function updateDragActive() {
-                paletteCell.Drag.active = mouseArea.drag.active
+                paletteCell.Drag.active = paletteCell.dragActive
             }
 
             mouseArea.onPressed: function(e) {
-                paletteCell.beginDrag()
+                paletteCell.beginDrag(Qt.point(e.x, e.y))
             }
 
             mouseArea.onReleased: {
                 paletteCell.endDrag()
+            }
+            mouseArea.onCanceled: {
+                paletteCell.endDrag()
+            }
+
+            PanelDragGesture {
+                id: cellDragGesture
+                mouseArea: paletteCell.mouseArea
+                item: paletteCell
+                allowHorizontalTouchDrag: true
+            }
+
+            TouchDragHandle {
+                id: cellTouchDragHandle
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                width: Math.min(24, parent.width / 2)
+                height: Math.min(24, parent.height / 2)
+                visible: Qt.platform.os === "ios" && paletteCell.isSelected && paletteCell.model.editable
+                dragTarget: draggedIcon
+                z: 2
+                onDragPressed: function(mouse) {
+                    paletteCell.updateSelection()
+                    paletteCell.beginDrag(cellTouchDragHandle.mapToItem(paletteCell, mouse.x, mouse.y))
+                }
+                onDragReleased: paletteCell.endDrag()
+                onDragCanceled: paletteCell.endDrag()
             }
 
             onClicked: {
@@ -657,7 +685,7 @@ StyledGridView {
                 paletteView.selectionModel.clearSelection()
             }
 
-            function beginDrag() {
+            function beginDrag(hotSpot) {
                 draggedIcon.icon = model.decoration
 
                 console.log("isSystemDragSupported: ", ui.isSystemDragSupported)
@@ -666,8 +694,8 @@ StyledGridView {
 
                     draggedIcon.grabToImage(function(result) {
                         Drag.imageSource = result.url
-                        Drag.hotSpot.x = paletteCell.mouseArea.mouseX
-                        Drag.hotSpot.y = paletteCell.mouseArea.mouseY
+                        Drag.hotSpot.x = hotSpot.x
+                        Drag.hotSpot.y = hotSpot.y
                         dragDropReorderTimer.restart();
                     })
 

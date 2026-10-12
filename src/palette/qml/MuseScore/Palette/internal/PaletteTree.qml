@@ -555,7 +555,8 @@ StyledListView {
 
             width: ListView.view.width
 
-            Drag.active: paletteTree.paletteProvider.isPaletteDragEnabled && paletteHeaderDragArea.drag.active
+            Drag.active: paletteTree.paletteProvider.isPaletteDragEnabled
+                         && (paletteHeaderDragArea.drag.active || paletteHeaderTouchHandle.drag.active)
             Drag.dragType: Drag.Automatic
             Drag.supportedActions: Qt.MoveAction
             Drag.proposedAction: Qt.MoveAction
@@ -657,6 +658,7 @@ StyledListView {
                     custom: control.model.custom
 
                     unresolved: control.DelegateModel.isUnresolved
+                    touchDragHandleWidth: Qt.platform.os === "ios" && paletteTree.paletteProvider.isPaletteDragEnabled ? 32 : 0
 
                     onToggleExpandRequested: {
                         paletteTree.currentIndex = control.rowIndex;
@@ -684,7 +686,8 @@ StyledListView {
                     MouseArea {
                         id: paletteHeaderDragArea
                         anchors.fill: parent
-                        drag.target: this // TODO or control or paletteHeader?
+                        drag.target: headerDragGesture.dragAllowed ? this : null
+                        preventStealing: headerDragGesture.preventStealing
 
                         drag.axis: Drag.YAxis
 
@@ -698,6 +701,30 @@ StyledListView {
 
                         onClicked: function(mouse) { control.clicked() }
                         onDoubleClicked: function(mouse) { control.doubleClicked() }
+                    }
+
+                    PanelDragGesture {
+                        id: headerDragGesture
+                        mouseArea: paletteHeaderDragArea
+                        item: paletteHeader
+                    }
+
+                    Item { id: headerTouchDragTarget }
+
+                    TouchDragHandle {
+                        id: paletteHeaderTouchHandle
+                        parent: paletteHeader.touchDragHandleContainer
+                        anchors.fill: parent
+                        dragTarget: headerTouchDragTarget
+                        drag.axis: Drag.YAxis
+                        onDragPressed: function(mouse) {
+                            const hotSpot = paletteHeaderTouchHandle.mapToItem(control, mouse.x, mouse.y)
+                            control.grabToImage(function(result) {
+                                control.Drag.imageSource = result.url
+                                control.Drag.hotSpot.x = hotSpot.x
+                                control.Drag.hotSpot.y = hotSpot.y
+                            })
+                        }
                     }
                 }
 

@@ -35,6 +35,13 @@ prerequisite for submitting a useful report. Test with copies of scores.
 - Open preferences and switch between pages.
 - Open/close About, score creation, export and other dialogs.
 - Open File → Open Recent; repeatedly switch submenu rows, then dismiss outside.
+- Swipe vertically on palette category titles, symbol cells and Layout rows;
+  each should scroll without reordering. Check docked and floating panels.
+- Drag the iPad grip on a palette category or Layout row to reorder it. Holding
+  that grip must not open a context menu; holding the row body still should.
+- Open Clefs and drag a symbol horizontally toward the score, then move it
+  freely and drop it. Tap a symbol and drag its corner grip to reorder it in
+  the palette. Check the same gestures in the More popup and with a mouse.
 - Drag the score with a finger, tap notes, and long-press for a context menu.
 - Tap a movable element to select it, then drag it with a finger. The element
   should move without panning the page. Undo and redo the edit.

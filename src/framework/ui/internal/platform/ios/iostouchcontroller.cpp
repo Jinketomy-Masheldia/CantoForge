@@ -185,6 +185,20 @@ bool IosTouchController::eventFilter(QObject* watched, QEvent* event)
         reset();
         return false;
     }
+    // Resolve a panel's drag direction before Flickable processes the move.
+    // This also handles a diagonal first move that already exceeds its scroll
+    // threshold. QPointer prevents a deleted delegate being called.
+    if (event->type() == QEvent::TouchUpdate) {
+        auto* touch = static_cast<QTouchEvent*>(event);
+        const auto candidate = window->property("museTouchDragCandidate").value<QPointer<QObject> >();
+        if (candidate && touch->pointCount() == 1) {
+            QMetaObject::invokeMethod(candidate.data(), "updateDirection", Qt::DirectConnection,
+                                      Q_ARG(QVariant, QVariant::fromValue(touch->point(0).position())));
+        }
+    }
+    if (event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel) {
+        window->setProperty("museTouchDragCandidate", QVariant());
+    }
     if (event->type() == QEvent::TouchBegin) {
         auto* touch = static_cast<QTouchEvent*>(event);
         // Menus own their touch selection; holding a menu row is not a right click.

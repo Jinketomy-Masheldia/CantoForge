@@ -125,7 +125,8 @@ BasicTableView {
         focus: true
         // If there is not a touchscreen, keep the flickable from eating our mouse drags.
         // If there is a touchscreen, flicking is possible, but selection can be done only by tapping, not by dragging.
-        preventStealing: true //!Settings.hasTouchScreen
+        property bool touchPress: false
+        preventStealing: pressed && !touchPress
 
         property var clickedIndex: undefined
         property var pressedIndex: undefined
@@ -245,13 +246,14 @@ BasicTableView {
         }
 
         onPressed: function(mouse) {
+            touchPress = ui.isTouchInput(root)
             var pressedRow = __listView.indexAt(0, mouseY + __listView.contentY)
             pressedIndex = modelAdaptor.mapRowToModelIndex(pressedRow)
             pressedColumn = __listView.columnAt(mouseX)
             selectOnRelease = false
             __listView.forceActiveFocus()
             if (pressedRow === -1
-                // || Settings.hasTouchScreen
+                || touchPress
                 || branchDecorationContains(mouse.x, mouse.y)) {
                 return
             }
@@ -282,6 +284,9 @@ BasicTableView {
         }
 
         onPositionChanged: function(mouse) {
+            if (touchPress) {
+                return
+            }
             // NOTE: Testing for pressed is not technically needed, at least
             // until we decide to support tooltips or some other hover feature
             if (mouseY > __listView.height && pressed) {
@@ -329,19 +334,15 @@ BasicTableView {
                     else
                         modelAdaptor.expand(modelIndex)
                 } else {
-                    // if (Settings.hasTouchScreen) {
-                    //     // compensate for the fact that onPressed didn't select on press: do it here instead
-                    //     pressedIndex = modelAdaptor.mapRowToModelIndex(clickIndex)
-                    //     pressedColumn = __listView.columnAt(mouseX)
-                    //     selectOnRelease = false
-                    //     __listView.forceActiveFocus()
-                    //     __listView.currentIndex = clickIndex
-                    //     if (!clickedIndex)
-                    //         clickedIndex = pressedIndex
-                    //     mouseSelect(pressedIndex, mouse.modifiers, false)
-                    //     if (!mouse.modifiers)
-                    //         clickedIndex = pressedIndex
-                    // }
+                    if (touchPress) {
+                        // Select on a completed tap, not at the start of a swipe.
+                        __listView.currentIndex = clickIndex
+                        if (!clickedIndex)
+                            clickedIndex = modelIndex
+                        mouseSelect(modelIndex, mouse.modifiers, false)
+                        if (!mouse.modifiers)
+                            clickedIndex = modelIndex
+                    }
                     if (root.__activateItemOnSingleClick && !mouse.modifiers)
                         root.activated(modelIndex)
                 }
