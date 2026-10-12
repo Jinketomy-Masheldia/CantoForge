@@ -11,6 +11,12 @@ CantoForge is an independent community project. It is **not affiliated with
 or endorsed by MuseScore or Muse Group**, and is not the official MuseScore
 mobile application.
 
+<p align="center">
+  <img src="docs/images/cantoforge-ipad.png" alt="CantoForge score editor on a landscape iPad, showing the desktop toolbars, palettes and sheet music" width="960">
+</p>
+
+*CantoForge running on iPad, with the familiar MuseScore Studio desktop interface.*
+
 ## Download and install
 
 Download the unsigned IPA from [Releases](https://github.com/Jinketomy-Masheldia/CantoForge/releases).
