@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — iPad build 19, 2026-10-12
+## v0.1.0-alpha.2 — 2026-10-12
 
 - Restored finger dragging of selected score elements and slur/tie grips without
   panning the page. Mouse users can still press and drag an unselected element.
@@ -14,8 +14,8 @@
   gestures to reduce accidental exits while editing.
 - Targeted host input checks and the arm64 build passed. The maintainer reports
   the final build works well on the test iPad; broader device testing is pending.
-- These changes are on the `ipad-port` branch and are not included in the
-  existing `v0.1.0-alpha.1` binary release.
+- iPad bundle build 19. The port release version remains separate from the
+  upstream MuseScore Studio 4.7.5 version.
 
 ## v0.1.0-alpha.1 — 2026-10-12
 

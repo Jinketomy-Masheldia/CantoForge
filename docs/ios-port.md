@@ -70,7 +70,7 @@ Adjust the paths if Qt is installed elsewhere:
 ```sh
 export QT_IOS_DIR="$HOME/Qt/6.11.2/ios"
 export QT_HOST_DIR="$HOME/Qt/6.11.2/macos"
-buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=14
+buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=19
 ```
 
 `QT_IOS_DIR/lib/cmake/Qt6/qt.toolchain.cmake` must exist. The helper configures
@@ -107,7 +107,7 @@ For a public release candidate, install the matching **Qt Sources** component
 and include dependency notices in the bundle:
 
 ```sh
-buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=14 \
+buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=19 \
   -DMUE_IOS_INCLUDE_RELEASE_NOTICES=ON \
   -DMUE_QT_SOURCE_DIR="$HOME/Qt/6.11.2/Src"
 ```

@@ -4,9 +4,10 @@ CantoForge is an unofficial iPadOS port of MuseScore Studio 4.7.5. Public
 releases use the CantoForge name, the maintainer-supplied logo, and
 `com.jmx.cantoforge`. Keep upstream copyrights and component notices intact.
 
-## First release
+## Current release
 
-The first release is **v0.1.0-alpha.1**, marked as a **pre-release**. The
+The current release is **v0.1.0-alpha.2**, iPad bundle build **19**, marked as a
+**pre-release**. The first release, `v0.1.0-alpha.1`, remains available. The
 configured device target is arm64 with iPadOS 17.0 or later. The maintainer
 reports usability on an 11-inch iPad Pro (2022, M2); this is not a complete
 device/feature compatibility audit.
@@ -42,13 +43,13 @@ source collection for other platforms but is not linked into the iOS app.
 
 ## Release assets
 
-- `CantoForge-v0.1.0-alpha.1-iPad-unsigned.ipa`
-- `CantoForge-v0.1.0-alpha.1-source.tar.gz`
+- `CantoForge-v0.1.0-alpha.2-iPad-unsigned.ipa`
+- `CantoForge-v0.1.0-alpha.2-source.tar.gz`
 - `qt-6.11.2-maintenance-tool-source.tar.gz`
 - `qt-6.11.2-ios-build-evidence.tar.gz`
 - `harfbuzz-12.3.0.tar.xz`
-- `CantoForge-v0.1.0-alpha.1-build-info.json`
-- `SOURCE-MANIFEST.json`, `RELEASE-INFO.md`, and `SHA256SUMS`
+- `CantoForge-v0.1.0-alpha.2-build-info.json`
+- `SOURCE-MANIFEST.json`, `PACKAGE-AUDIT.json`, `RELEASE-INFO.md`, and `SHA256SUMS`
 
 Qt is statically linked. GitHub's automatic repository source ZIP does not
 include Qt or separately downloaded dependency sources. The release assets
