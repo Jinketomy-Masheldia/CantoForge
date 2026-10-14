@@ -38,14 +38,30 @@ PreferencesPage {
     }
 
     Column {
-        width: parent.width
+        width: parent ? parent.width : implicitWidth
         spacing: root.sectionsSpacing
 
         FFmpegSection {
+            visible: !videoPreferencesModel.usesSystemVideoEncoder
             model: videoPreferencesModel
 
             navigation.section: root.navigationSection
             navigation.order: root.navigationOrderStart + 1
+        }
+
+        BaseSection {
+            width: parent ? parent.width : implicitWidth
+            visible: videoPreferencesModel.usesSystemVideoEncoder
+            title: qsTrc("preferences", "Video converter")
+            navigation.section: root.navigationSection
+            navigation.order: root.navigationOrderStart + 1
+
+            StyledTextLabel {
+                width: parent ? parent.width : implicitWidth
+                text: qsTrc("cantoforge/video", "Video export uses the iPadOS system encoder. No additional installation is required.")
+                horizontalAlignment: Text.AlignLeft
+                wrapMode: Text.WordWrap
+            }
         }
     }
 }

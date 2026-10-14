@@ -70,7 +70,7 @@ Adjust the paths if Qt is installed elsewhere:
 ```sh
 export QT_IOS_DIR="$HOME/Qt/6.11.2/ios"
 export QT_HOST_DIR="$HOME/Qt/6.11.2/macos"
-buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=19
+buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=21
 ```
 
 `QT_IOS_DIR/lib/cmake/Qt6/qt.toolchain.cmake` must exist. The helper configures
@@ -107,7 +107,7 @@ For a public release candidate, install the matching **Qt Sources** component
 and include dependency notices in the bundle:
 
 ```sh
-buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=19 \
+buildscripts/ios/build.sh device -DMUE_IOS_BUNDLE_VERSION=21 \
   -DMUE_IOS_INCLUDE_RELEASE_NOTICES=ON \
   -DMUE_QT_SOURCE_DIR="$HOME/Qt/6.11.2/Src"
 ```
@@ -167,6 +167,30 @@ simulator libraries available during development. It is not an established
 arm64 simulator configuration. CoreSimulator runtime execution was not
 available in the development environment; do not treat this preset as a
 verified simulator run. Device builds are the primary tested build path.
+
+## System video export (current source)
+
+MP4 export on iPad uses the system AVFoundation H.264 encoder and combines the
+result with AAC audio produced by the existing AudioToolbox backend. No FFmpeg
+installation, external executable or downloadable codec is needed. The existing
+resolution and score-view controls are retained. The outro holds the final score
+frame; the desktop "Made with MuseScore" clip is not bundled on iOS.
+
+The native backend can be checked on a Mac with the matching host Qt kit:
+
+```sh
+bash buildscripts/ios/check-aac.sh
+bash buildscripts/ios/check-video.sh
+```
+
+The video probe accepts an optional path to an existing ADTS AAC file. It decodes
+the generated 1080p/4K MP4 files and checks audio, picture orientation/colors,
+duration, Unicode paths, failed input and cancellation. Run it in a normal Mac
+terminal: a restricted execution environment may not have access to system
+encoders. This verifies the native backend, not end-to-end iPad score export.
+The maintainer also reports stable score video export on the M2 iPad with
+build 20. Build 21 is the beta candidate with additional CantoForge translations;
+these changes are not part of the alpha.2/build 19 IPA.
 
 ## Diagnostics
 

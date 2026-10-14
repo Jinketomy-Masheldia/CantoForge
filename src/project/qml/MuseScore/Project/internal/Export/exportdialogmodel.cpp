@@ -666,7 +666,11 @@ ExportDialogModel::ViewMode ExportDialogModel::viewMode() const
 bool ExportDialogModel::isFFmpegAvailable() const
 {
 #ifdef MUE_BUILD_IMPEXP_VIDEOEXPORT_MODULE
+#ifdef Q_OS_IOS
+    return videoEncoderResolver() && bool(videoEncoderResolver()->currentVideoEncoder());
+#else
     return videoEncoderResolver()->loadedFFmpegVersion() != muse::media::FFMPEG_INVALID_VERSION;
+#endif
 #else
     return false;
 #endif
@@ -720,7 +724,7 @@ void ExportDialogModel::setSampleRate(int rate)
 QList<int> ExportDialogModel::availableBitRates() const
 {
 #ifdef Q_OS_IOS
-    if (m_selectedExportType.suffixes.contains("aac")) {
+    if (m_selectedExportType.suffixes.contains("aac") || m_selectedExportType.suffixes.contains("mp4")) {
         const auto rates = muse::audio::encode::AppleAacWriter::supportedBitRates(sampleRate(), 2);
         QList<int> result;
         for (auto rate : rates) {
@@ -736,7 +740,7 @@ QList<int> ExportDialogModel::availableBitRates() const
 void ExportDialogModel::ensureSupportedAudioBitRate()
 {
 #ifdef Q_OS_IOS
-    if (m_selectedExportType.suffixes.contains("aac")) {
+    if (m_selectedExportType.suffixes.contains("aac") || m_selectedExportType.suffixes.contains("mp4")) {
         const auto rates = availableBitRates();
         const int current = bitRate();
         if (!rates.empty() && !rates.contains(current)) {

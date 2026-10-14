@@ -165,6 +165,12 @@ void ProjectAutoSaver::onTrySave()
         }
     };
 
+    // Video export temporarily changes score layout while processing events.
+    // Defer autosave until the export restores the original score/view state.
+    if (exportScenario() && exportScenario()->isExporting()) {
+        return;
+    }
+
     INotationProjectPtr project = globalContext()->currentProject();
     if (!project) {
         LOGD() << "[autosave] no project";

@@ -54,6 +54,15 @@ int VideoPreferencesModel::ffmpegVersion() const
     return videoEncoderResolver()->loadedFFmpegVersion();
 }
 
+bool VideoPreferencesModel::usesSystemVideoEncoder() const
+{
+#ifdef Q_OS_IOS
+    return true;
+#else
+    return false;
+#endif
+}
+
 QString VideoPreferencesModel::ffmpegDir() const
 {
     return videoEncoderResolver()->loadedFFmpegDir().toQString();

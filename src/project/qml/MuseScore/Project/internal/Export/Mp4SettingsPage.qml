@@ -48,13 +48,16 @@ ExportSettingsPage {
 
             StyledTextLabel {
                 width: parent.width
-                text: qsTrc("project/export", "To export to this file format, an FFmpeg installation is required. You can also configure this in Preferences > Video.")
+                text: Qt.platform.os === "ios"
+                      ? qsTrc("cantoforge/video", "The system video encoder is unavailable.")
+                      : qsTrc("project/export", "To export to this file format, an FFmpeg installation is required. You can also configure this in Preferences > Video.")
                 horizontalAlignment: Text.AlignLeft
                 wrapMode: Text.WordWrap
             }
 
             FlatButton {
                 id: downloadButton
+                visible: Qt.platform.os !== "ios"
 
                 text: qsTrc("project/export", "Download FFmpeg")
                 icon: IconCode.OPEN_LINK
@@ -71,6 +74,7 @@ ExportSettingsPage {
             }
 
             FilePicker {
+                visible: Qt.platform.os !== "ios"
                 width: parent.width
 
                 pickerType: FilePicker.PickerType.Directory

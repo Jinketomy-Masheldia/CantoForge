@@ -20,13 +20,17 @@ mobile application.
 ## Download and install
 
 Download the unsigned IPA from [Releases](https://github.com/Jinketomy-Masheldia/CantoForge/releases).
-The current release is **[v0.1.0-alpha.2](https://github.com/Jinketomy-Masheldia/CantoForge/releases/tag/v0.1.0-alpha.2)**
-(iPad app build **19**), an experimental pre-release.
+The next prepared pre-release is **v0.1.0-beta.1** (iPad app build **21**),
+pending final maintainer testing and publication. Available builds are listed
+on the Releases page; the earlier
+[v0.1.0-alpha.2](https://github.com/Jinketomy-Masheldia/CantoForge/releases/tag/v0.1.0-alpha.2)
+uses app build **19**.
 The port release number is separate from the upstream Studio version and the
 iPad app's bundle build number.
 
-This release includes finger dragging of selected score elements and slur/tie
-grips, panel scrolling and bottom-edge gesture protection.
+The beta candidate adds system MP4 video export and five more languages for
+CantoForge-specific text. It retains finger dragging of selected score elements
+and slur/tie grips, panel scrolling and bottom-edge gesture protection.
 See [the changelog](CHANGELOG.md) for the changes since the first release.
 
 Sign and install the IPA using your own compatible sideloading workflow, such
@@ -53,17 +57,21 @@ trying this experimental port.
 | Score creation, preferences and export dialogs | iPad platform fixes included |
 | Playback | CoreAudio output with bundled MS Basic and FluidR3Mono SoundFonts |
 | Audio export | Apple AudioToolbox AAC-LC/ADTS backend; other retained desktop formats depend on the available exporters |
+| Video export | MP4 with system H.264 encoding and AAC audio; native Mac probe passed and the maintainer reports stable export on the M2 iPad using build 20 |
 | Files integration | Document import, local score storage and file sharing |
 | Touch input | Score panning, tap selection, selected element/grip dragging, panel scrolling, long-press context menus and touch-aware submenus |
 | External mouse and keyboard | Desktop input retained, with an iPad secondary-click bridge |
 | Import/export formats | Core modules retained; every format has not been verified on iPad |
-| Languages | Upstream translations retained; new CantoForge text translated into Simplified and Traditional Chinese, with English fallback elsewhere |
+| Languages | Upstream translations retained; new CantoForge text translated into Simplified and Traditional Chinese, Japanese, German, French, Spanish and Italian, with English fallback elsewhere |
 
 MuseSounds/MuseSampler, desktop VST plug-ins, the desktop updater, subprocess
-multiwindow support, cloud integration, automation and video export are
+multiwindow support, cloud integration and automation are
 disabled in the iPad configuration. Cloud save and publishing controls are
 disabled. Experimental MNX import/export is disabled by the build helper.
 Script/QML extensions are retained, but external-process APIs are unavailable.
+
+System video export is included in the beta candidate and is not present in
+the earlier `v0.1.0-alpha.2` / build 19 IPA.
 
 Portrait layouts, multitasking, Apple Pencil, accessibility, printing,
 larger-score performance and accessory-specific behavior need further testing.
@@ -84,9 +92,10 @@ The framework and vendored dependencies for this baseline are in-tree;
 the later upstream development branch's submodules are not required.
 
 Each binary release includes matching application and dependency source
-materials, build information, license notices and checksums. Qt is statically
-linked; the automatic GitHub source ZIP alone does not include the separately
-installed Qt sources. See [release preparation](docs/releasing.md).
+materials (attached directly or explicitly linked when unchanged), build
+information, license notices and checksums. Qt is statically linked; the
+automatic GitHub source ZIP alone does not include the separately installed
+Qt sources. See [release preparation](docs/releasing.md).
 
 ## Privacy and feedback
 

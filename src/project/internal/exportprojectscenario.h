@@ -61,6 +61,7 @@ public:
                       bool openDestinationFolderOnExport = false) const override;
 
     const ExportInfo& exportInfo() const override;
+    bool isExporting() const override { return m_exportDepth != 0; }
     void setExportInfo(const ExportInfo& exportInfo) override;
 
 private:
@@ -98,6 +99,7 @@ private:
 
     mutable FileConflictPolicy m_fileConflictPolicy = FileConflictPolicy::Undefined;
     mutable muse::Progress m_exportProgress;
+    mutable unsigned m_exportDepth = 0;
     ExportInfo m_exportInfo;
 };
 }

@@ -43,6 +43,7 @@ public:
     virtual bool exportScores(notation::INotationPtrList notations, const muse::io::path_t destinationPath,
                               INotationWriter::UnitType unitType = INotationWriter::UnitType::PER_PART,
                               bool openDestinationFolderOnExport = false) const = 0;
+    virtual bool isExporting() const { return false; }
 
     virtual const ExportInfo& exportInfo() const = 0;
     virtual void setExportInfo(const ExportInfo& exportInfo) = 0;

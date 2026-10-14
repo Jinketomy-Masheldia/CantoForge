@@ -55,6 +55,22 @@ prerequisite for submitting a useful report. Test with copies of scores.
   interrupted drag must finish cleanly and remain undoable.
 - In note input, check that a drag or long press does not insert an extra note.
 
+### System MP4 export (new source)
+
+- Export a short score with a title, a page change and repeats, using both
+  full-page and flexible layout at 1080p. Play the result in Files and check
+  that the playback cursor follows the sound and that the audio is complete.
+- Check 1440p/4K, Unicode filenames and different audio sample rates/bit rates.
+- Cancel during frame generation and during finalization; the app must remain
+  responsive, stop the export and permit another export afterwards.
+- Check that page layout, visibility settings and the saved score are unchanged
+  after export/cancellation. Check export of an extracted part and several parts.
+- The maintainer-run Mac backend probe passed 1080p/4K picture/audio decoding,
+  colors/orientation, duration, Unicode names and error/cancellation handling.
+  The maintainer additionally reports stable score video export on the M2 iPad
+  with build 20; this does not establish compatibility with other devices or
+  every score. Build 21 translation/layout and update testing remain pending.
+
 ## Priority 3: additional coverage
 
 - External mouse secondary click, hover and keyboard shortcuts.

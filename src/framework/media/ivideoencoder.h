@@ -57,6 +57,8 @@ public:
     virtual bool encodeVideo(const muse::ByteArray& videoData, int maxFrames = -1) = 0;
 
     virtual bool addAudio(const muse::io::path_t& audioPath) = 0;
+    virtual void abort() {}
+    virtual bool hasError() const { return false; }
 };
 using IVideoEncoderPtr = std::shared_ptr<IVideoEncoder>;
 }

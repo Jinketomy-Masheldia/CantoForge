@@ -34,10 +34,14 @@ target_sources(iex_videoexport PRIVATE
 
 target_link_libraries(iex_videoexport PRIVATE Qt::Concurrent muse::media engraving)
 
+set(VIDEOEXPORT_RESOURCES internal/resources/MuseSans-Medium.ttf)
+if (NOT OS_IS_IOS)
+    list(APPEND VIDEOEXPORT_RESOURCES internal/resources/video_made_with.mp4)
+endif()
+
 qt_add_resources(iex_videoexport iex_videoexport_resources
     PREFIX
         /videoexport
     FILES
-        internal/resources/video_made_with.mp4
-        internal/resources/MuseSans-Medium.ttf
+        ${VIDEOEXPORT_RESOURCES}
 )

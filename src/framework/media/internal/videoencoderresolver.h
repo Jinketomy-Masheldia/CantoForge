@@ -27,7 +27,9 @@
 #include "io/filesystemwatcher.h"
 #include "imediaconfiguration.h"
 
+#ifndef Q_OS_IOS
 #include "ffmpegutils.h"
+#endif
 
 #include "../ivideoencoderresolver.h"
 
@@ -55,6 +57,7 @@ public:
     void setIsSettingMode(bool arg) override;
 
 private:
+#ifndef Q_OS_IOS
     void resetFFmpegSettings();
     void startWatchingFfmpegsDirs();
 
@@ -65,13 +68,18 @@ private:
     };
 
     EncoderInfo makeEncoder(const FFmpegLibPaths& ffmpegLibsPaths) const;
+#endif
 
     IVideoEncoderPtr m_encoder;
+#ifndef Q_OS_IOS
     FFmpegVersion m_currentEncoderFFmpegVersion = FFMPEG_INVALID_VERSION;
+#endif
 
     async::Notification m_loadedFFmpegChanged;
 
+#ifndef Q_OS_IOS
     muse::io::FileSystemWatcher m_ffmpegLibWatcher;
     std::shared_ptr<Timer> m_reloadFfmpegTimer;
+#endif
 };
 }

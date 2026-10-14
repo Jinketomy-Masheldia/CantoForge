@@ -26,16 +26,36 @@
 #include "io/path.h"
 #include "log.h"
 
+#ifdef Q_OS_IOS
+#include "internal/platform/apple/nativevideoencoder.h"
+#else
 #include "internal/ffmpeg/v8/videoencoder.h"
 #include "internal/ffmpeg/v7/videoencoder.h"
 #include "internal/ffmpeg/v6/videoencoder.h"
 #include "internal/ffmpeg/v5/videoencoder.h"
 #include "internal/ffmpeg/v4/videoencoder.h"
+#endif
 
 #include "mediatypes.h"
 
 using namespace muse::media;
 
+#ifdef Q_OS_IOS
+void VideoEncoderResolver::init()
+{
+    m_encoder = std::make_shared<NativeVideoEncoder>();
+    LOGI() << "Video export uses Apple AVFoundation";
+}
+
+void VideoEncoderResolver::deinit() { m_encoder.reset(); }
+void VideoEncoderResolver::loadFFmpeg(const io::path_t&) {}
+muse::io::path_t VideoEncoderResolver::loadedFFmpegDir() const { return {}; }
+FFmpegVersion VideoEncoderResolver::loadedFFmpegVersion() const { return FFMPEG_INVALID_VERSION; }
+muse::async::Notification VideoEncoderResolver::loadedFFmpegChanged() const { return m_loadedFFmpegChanged; }
+IVideoEncoderPtr VideoEncoderResolver::currentVideoEncoder() const { return m_encoder; }
+void VideoEncoderResolver::setCurrentVideoEncoder(IVideoEncoderPtr encoder) { m_encoder = std::move(encoder); }
+void VideoEncoderResolver::setIsSettingMode(bool) {}
+#else
 void VideoEncoderResolver::init()
 {
     loadFFmpeg(configuration()->ffmpegLibsDir());
@@ -187,3 +207,4 @@ VideoEncoderResolver::EncoderInfo VideoEncoderResolver::makeEncoder(const FFmpeg
 
     return result;
 }
+#endif

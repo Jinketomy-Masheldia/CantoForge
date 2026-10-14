@@ -30,6 +30,7 @@
 #include "context/iglobalcontext.h"
 #include "io/ifilesystem.h"
 #include "iprojectconfiguration.h"
+#include "iexportprojectscenario.h"
 
 #include "../iprojectautosaver.h"
 
@@ -39,6 +40,7 @@ class ProjectAutoSaver : public IProjectAutoSaver, public muse::async::Asyncable
     muse::GlobalInject<muse::io::IFileSystem> fileSystem;
     muse::GlobalInject<IProjectConfiguration> configuration;
     muse::ContextInject<context::IGlobalContext> globalContext = { this };
+    muse::ContextInject<IExportProjectScenario> exportScenario = { this };
 
 public:
     ProjectAutoSaver(const muse::modularity::ContextPtr& iocCtx)

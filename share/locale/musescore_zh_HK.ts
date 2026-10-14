@@ -38750,4 +38750,16 @@ failed: %2</source>
         <translation>名稱已存在</translation>
     </message>
 </context>
+
+<context>
+    <name>cantoforge/video</name>
+    <message>
+        <source>Video export uses the iPadOS system encoder. No additional installation is required.</source>
+        <translation>影片匯出使用 iPadOS 系統編碼器，無需額外安裝。</translation>
+    </message>
+    <message>
+        <source>The system video encoder is unavailable.</source>
+        <translation>系統影片編碼器無法使用。</translation>
+    </message>
+</context>
 </TS>

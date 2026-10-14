@@ -40,6 +40,7 @@ class VideoPreferencesModel : public QObject, public muse::Contextable, public m
 
     Q_PROPERTY(int ffmpegVersion READ ffmpegVersion NOTIFY ffmpegVersionChanged FINAL)
     Q_PROPERTY(QString ffmpegDir READ ffmpegDir WRITE setFFmpegDir NOTIFY ffmpegDirChanged FINAL)
+    Q_PROPERTY(bool usesSystemVideoEncoder READ usesSystemVideoEncoder CONSTANT)
 
 public:
     explicit VideoPreferencesModel(QObject* parent = nullptr);
@@ -48,6 +49,7 @@ public:
     Q_INVOKABLE void load();
 
     int ffmpegVersion() const;
+    bool usesSystemVideoEncoder() const;
 
     QString ffmpegDir() const;
     void setFFmpegDir(const QString& dir);

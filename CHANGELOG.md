@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.1.0-beta.1 — prepared for testing, 2026-10-14
+
+- Enabled MP4 score video export on iPad using Apple AVFoundation for H.264
+  encoding and AAC track muxing, without linking or shipping FFmpeg.
+- Retained the existing resolution, audio and score-view controls. iPad video
+  preferences describe the system encoder instead of asking to install FFmpeg.
+- The iPad outro holds the last score frame instead of embedding the desktop
+  "Made with MuseScore" clip.
+- Propagated frame/finalization failures, kept finalization off the UI thread,
+  and made cancellation and cross-thread completion explicit.
+- Deferred autosave during export so temporary video layout is not saved into
+  the user's score or recovery file.
+- The actual native backend passed the maintainer-run Mac probe for 1080p/4K,
+  decoded picture/audio, colors/orientation, duration, Unicode filenames,
+  invalid input and cancellation. The maintainer also reports stable video
+  export on the M2 iPad using build 20.
+- Added Japanese, German, French, Spanish and Italian translations for the
+  CantoForge welcome, project/privacy, About, settings and system video text.
+- Prepared iPad bundle build 21 as the first beta candidate. It adds translations
+  and publication metadata to the tested build 20 runtime; final candidate device
+  testing and publication are pending. Alpha.2/build 19 remains a separate release.
+
 ## v0.1.0-alpha.2 — 2026-10-12
 
 - Restored finger dragging of selected score elements and slur/tie grips without

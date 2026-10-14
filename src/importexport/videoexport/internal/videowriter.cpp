@@ -108,6 +108,9 @@ muse::Ret VideoWriter::write(INotationPtr notation, muse::io::IODevice& device, 
     muse::io::path_t tempAudioPath = finalPath + ".tmp_audio.aac";
 
     auto encoder = videoEncodeResolver()->currentVideoEncoder();
+    if (!encoder) {
+        return make_ret(muse::Ret::Code::NotSupported);
+    }
 
     muse::media::IVideoEncoder::Options encoderOptions;
     encoderOptions.format = "mp4";
@@ -128,6 +131,17 @@ muse::Ret VideoWriter::write(INotationPtr notation, muse::io::IODevice& device, 
     m_writeRet = muse::Ret();
     m_audioRet = muse::Ret();
 
+#ifdef Q_OS_IOS
+    // Score layout and restoration must stay on the UI thread. Prepare before
+    // either rendering or audio export starts, so both see a stable layout.
+    auto restoreData = prepareScore(notation, cfg);
+    if (!restoreData) {
+        encoder->close();
+        return make_ret(muse::Ret::Code::UnknownError);
+    }
+#endif
+    m_progress.start();
+
     startVideoExport(encoder, notation, cfg);
 
     if (withAudio) {
@@ -139,7 +153,7 @@ muse::Ret VideoWriter::write(INotationPtr notation, muse::io::IODevice& device, 
 
     while (!m_isCompleted || !m_audioCompleted) {
         application()->processEvents();
-        QThread::yieldCurrentThread();
+        QThread::msleep(2);
     }
 
     if (m_audioWriter) {
@@ -147,29 +161,47 @@ muse::Ret VideoWriter::write(INotationPtr notation, muse::io::IODevice& device, 
         m_audioWriter = nullptr;
     }
 
-    muse::Ret result = m_writeRet;
+#ifdef Q_OS_IOS
+    restoreScore(notation, restoreData.value());
+#endif
 
-    encoder->finishEncode();
+    muse::Ret result = m_writeRet;
 
     // Release the device's file handle before add audio replaces the file
     device.close();
 
-    if (withAudio) {
-        if (result && m_audioRet) {
-            if (!encoder->addAudio(tempAudioPath)) {
+    // AVFoundation finalization/muxing is asynchronous internally. Keep its
+    // waits off the UI thread so the progress dialog can still be cancelled.
+    m_finalizing = true;
+    muse::Concurrent::run([this, encoder, withAudio, tempAudioPath, &result]() {
+        if (result && !m_abort) {
+            encoder->finishEncode();
+            if (encoder->hasError()) {
                 result = make_ret(muse::Ret::Code::UnknownError);
             }
-        } else if (!result) {
-            // keep video error
-        } else {
-            result = m_audioRet;
+            if (withAudio && result) {
+                if (!m_audioRet) {
+                    result = m_audioRet;
+                } else if (!encoder->addAudio(tempAudioPath)) {
+                    result = make_ret(muse::Ret::Code::UnknownError);
+                }
+            }
         }
-
-        muse::io::File::remove(tempAudioPath);
+        if (m_abort) {
+            result = make_ret(muse::Ret::Code::Cancel);
+        }
+        encoder->close();
+        m_finalizing = false;
+    });
+    while (m_finalizing) {
+        application()->processEvents();
+        QThread::msleep(2);
     }
 
-    encoder->close();
-
+    if (withAudio) {
+        muse::io::File::remove(tempAudioPath);
+    }
+    m_progress.finish(result);
     return result;
 }
 
@@ -260,7 +292,12 @@ void VideoWriter::startAudioExport(INotationPtr notation, const muse::io::path_t
     audioDevice.setMeta("file_path", audioPath.toStdString());
     audioDevice.open(muse::io::IODevice::WriteOnly);
 
-    m_audioWriter->write(notation, audioDevice, audioOpts);
+    muse::Ret ret = m_audioWriter->write(notation, audioDevice, audioOpts);
+    // Undefined is the existing asynchronous writer's "still running" result.
+    if (!ret && ret.code() != int(muse::Ret::Code::Undefined) && !m_audioCompleted) {
+        m_audioRet = ret;
+        m_audioCompleted = true;
+    }
 }
 
 muse::Ret VideoWriter::writeList(const INotationPtrList&, muse::io::IODevice&, const Options&)
@@ -278,14 +315,20 @@ void VideoWriter::abort()
 {
     m_abort = true;
 
+    if (auto encoder = videoEncodeResolver()->currentVideoEncoder()) {
+        encoder->abort();
+    }
+
     if (m_audioWriter) {
         m_audioWriter->abort();
+        m_audioRet = make_ret(muse::Ret::Code::Cancel);
+        m_audioCompleted = true;
     }
 
     // Wait abort completion
-    while (!m_isCompleted || !m_audioCompleted) {
+    while (!m_isCompleted || !m_audioCompleted || m_finalizing) {
         application()->processEvents();
-        QThread::yieldCurrentThread();
+        QThread::msleep(2);
     }
 }
 
@@ -394,20 +437,25 @@ void VideoWriter::restoreScore(INotationPtr notation, const ScoreRestoreData& da
 void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr notation, const Config& config)
 {
     Config actualConfig = config;
+#ifndef Q_OS_IOS
     auto restoreData = prepareScore(notation, actualConfig);
     if (!restoreData) {
         m_writeRet = make_ret(muse::Ret::Code::UnknownError);
         m_isCompleted = true;
         return;
     }
+#endif
 
     DEFER {
+#ifndef Q_OS_IOS
         restoreScore(notation, restoreData.value());
+#endif
         m_isCompleted = true;
     };
 
     // Setup painting
     QImage frame(actualConfig.width, actualConfig.height, QImage::Format_RGB32);
+    frame.fill(Qt::black);
     frame.setDotsPerMeterX(std::lrint((actualConfig.canvasDpi * 1000) / engraving::INCH));
     frame.setDotsPerMeterY(std::lrint((actualConfig.canvasDpi * 1000) / engraving::INCH));
 
@@ -427,8 +475,6 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
     int totalFrameCount = leadingFrameCount + scoreFrameCount + trailingFrameCount;
     LOGI() << "totalPlayTime: " << totalPlayTimeSec << " sec" << " frame count " << totalFrameCount;
 
-    m_progress.start();
-
     // Add score title
     if (!generateLeadingFrames(encoder, notation, painter, frame, actualConfig, totalFrameCount)) {
         return;
@@ -439,13 +485,21 @@ void VideoWriter::doGenerate(muse::media::IVideoEncoderPtr encoder, INotationPtr
         return;
     }
 
-    // Add "Made with MuseScore"
-    if (!generateTrailingFrames(encoder, actualConfig)) {
+    // iOS holds the final score frame; desktop retains its existing outro.
+    if (!generateTrailingFrames(encoder, actualConfig, frame)) {
         return;
     }
 
     m_writeRet = muse::make_ok();
-    m_progress.finish(muse::make_ok());
+}
+
+bool VideoWriter::encodeFrame(muse::media::IVideoEncoderPtr encoder, const QImage& frame)
+{
+    if (!m_abort && encoder->encodeImage(frame)) {
+        return true;
+    }
+    m_writeRet = make_ret(m_abort ? muse::Ret::Code::Cancel : muse::Ret::Code::UnknownError);
+    return false;
 }
 
 bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, INotationPtr notation,
@@ -506,7 +560,6 @@ bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, I
     for (int f = 0; f < leadingFrameCount; f++) {
         if (m_abort) {
             m_writeRet = make_ret(muse::Ret::Code::Cancel);
-            m_progress.finish(m_writeRet);
             return false;
         }
 
@@ -522,19 +575,30 @@ bool VideoWriter::generateLeadingFrames(muse::media::IVideoEncoderPtr encoder, I
             painter.drawText(subtitleRect, textFlags, subtitle);
         }
 
-        encoder->encodeImage(frame);
+        if (!encodeFrame(encoder, frame)) {
+            return false;
+        }
     }
 
     return true;
 }
 
-bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config)
+bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config, const QImage& lastFrame)
 {
     int trailingFrameCount = static_cast<int>(config.trailingSec * config.fps);
     if (trailingFrameCount <= 0) {
         return true;
     }
 
+#ifdef Q_OS_IOS
+    for (int f = 0; f < trailingFrameCount; ++f) {
+        if (!encodeFrame(encoder, lastFrame)) {
+            return false;
+        }
+    }
+    return true;
+#else
+    Q_UNUSED(lastFrame);
     static const muse::io::path_t RESOURCE_PATH = ":/videoexport/internal/resources/video_made_with.mp4";
 
     muse::io::File resource(RESOURCE_PATH);
@@ -545,9 +609,12 @@ bool VideoWriter::generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, 
     muse::ByteArray videoData = resource.readAll();
     resource.close();
 
-    encoder->encodeVideo(videoData, trailingFrameCount);
-
+    if (!encoder->encodeVideo(videoData, trailingFrameCount)) {
+        m_writeRet = make_ret(muse::Ret::Code::UnknownError);
+        return false;
+    }
     return true;
+#endif
 }
 
 bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INotationPtr notation,
@@ -582,7 +649,6 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
     for (int f = 0; f < scoreFrameCount; f++) {
         if (m_abort) {
             m_writeRet = make_ret(muse::Ret::Code::Cancel);
-            m_progress.finish(m_writeRet);
             return false;
         }
 
@@ -627,7 +693,9 @@ bool VideoWriter::generateScoreFrames(muse::media::IVideoEncoderPtr encoder, INo
 
         painter.restore();
 
-        encoder->encodeImage(frame);
+        if (!encodeFrame(encoder, frame)) {
+            return false;
+        }
     }
 
     return true;

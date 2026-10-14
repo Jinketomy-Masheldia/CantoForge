@@ -9745,6 +9745,11 @@ seguite da trattini</translation>
         <source>Se&amp;lection filter</source>
         <translation>Filtro se&amp;lezione</translation>
     </message>
+    <message>
+        <location filename="../../src/appshell/internal/applicationuiactions.cpp" />
+        <source>&amp;About CantoForge…</source>
+        <translation>&amp;Informazioni su CantoForge…</translation>
+    </message>
 </context>
 <context>
     <name>appshell</name>
@@ -10081,6 +10086,51 @@ Pubblicato sotto la &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <source>Unstable prerelease for %1</source>
         <translation>Pre-rilascio instabile della versione %1</translation>
     </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>About CantoForge</source>
+        <translation>Informazioni su CantoForge</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>CantoForge is an independent, unofficial iPadOS port of MuseScore Studio. It is not affiliated with or endorsed by MuseScore or Muse Group.</source>
+        <translation>CantoForge è un porting indipendente e non ufficiale di MuseScore Studio per iPadOS. Non è affiliato né a MuseScore né a Muse Group e non è approvato ufficialmente da queste organizzazioni.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>Based on MuseScore Studio %1</source>
+        <translation>Basato su MuseScore Studio %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>iPad app build: %1</source>
+        <translation>Numero di build dell’app per iPad: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>Source base revision:</source>
+        <translation>Revisione del codice sorgente di base:</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>Project source, releases and issue reports: &lt;a href="%1"&gt;GitHub&lt;/a&gt;.</source>
+        <translation>Codice sorgente, versioni pubblicate e segnalazioni di problemi del progetto: &lt;a href="%1"&gt;GitHub&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>The MuseScore &lt;a href="%1"&gt;website&lt;/a&gt; and &lt;a href="%2"&gt;forum&lt;/a&gt; are upstream resources. Report iPad port issues to the CantoForge project.</source>
+        <translation>Il &lt;a href="%1"&gt;sito web&lt;/a&gt; e il &lt;a href="%2"&gt;forum&lt;/a&gt; di MuseScore sono risorse del progetto originale. Segnala i problemi del porting per iPad al progetto CantoForge.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>CantoForge stores scores and diagnostic logs on your device. Online tutorials and external websites use network connections and are subject to their providers’ privacy policies.</source>
+        <translation>CantoForge memorizza gli spartiti e i registri diagnostici sul tuo dispositivo. I tutorial online e i siti web esterni utilizzano connessioni di rete e sono soggetti alle informative sulla privacy dei rispettivi fornitori.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/AboutDialog.qml" />
+        <source>iPadOS adaptations: CantoForge contributors. Third-party libraries, fonts and SoundFonts retain their own licenses and notices.</source>
+        <translation>Adattamenti per iPadOS: collaboratori di CantoForge. Le librerie, i caratteri e i SoundFont di terze parti mantengono le proprie licenze e note.</translation>
+    </message>
 </context>
 <context>
     <name>appshell/dock</name>
@@ -10188,6 +10238,36 @@ Pubblicato sotto la &lt;a href=&quot;%1&quot;&gt;GNU General Public License vers
         <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/firstlaunchsetupmodel.cpp" line="126"/>
         <source>Keep going</source>
         <translation>Procedi</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/ThemesPage.qml" />
+        <source>Welcome to CantoForge</source>
+        <translation>Benvenuto in CantoForge</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml" />
+        <source>About CantoForge</source>
+        <translation>Informazioni su CantoForge</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml" />
+        <source>An unofficial iPadOS port of MuseScore Studio.</source>
+        <translation>Un porting non ufficiale di MuseScore Studio per iPadOS.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml" />
+        <source>CantoForge is an independent project based on MuseScore Studio 4.7.5. It is not affiliated with or endorsed by MuseScore or Muse Group.</source>
+        <translation>CantoForge è un progetto indipendente basato su MuseScore Studio 4.7.5. Non è affiliato né a MuseScore né a Muse Group e non è approvato ufficialmente da queste organizzazioni.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/PlaybackPage.qml" />
+        <source>The desktop interface and core notation features are retained. Some desktop integrations are unavailable on iPadOS.</source>
+        <translation>L’interfaccia desktop e le principali funzioni di notazione sono mantenute. Alcune integrazioni della versione desktop non sono disponibili su iPadOS.</translation>
+    </message>
+    <message>
+        <location filename="../../src/appshell/qml/MuseScore/AppShell/FirstLaunchSetup/TutorialsPage.qml" />
+        <source>CantoForge stores scores and diagnostic logs on your device. Online tutorials and external websites use network connections and are subject to their providers’ privacy policies.</source>
+        <translation>CantoForge memorizza gli spartiti e i registri diagnostici sul tuo dispositivo. I tutorial online e i siti web esterni utilizzano connessioni di rete e sono soggetti alle informative sulla privacy dei rispettivi fornitori.</translation>
     </message>
 </context>
 <context>
@@ -34720,6 +34800,11 @@ fallita: %2</translation>
         <source>Use warmer instrument sound (MS Basic/SoundFont only)</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <location filename="../../src/preferences/qml/MuseScore/Preferences/internal/WelcomeDialogSection.qml" />
+        <source>Show welcome screen when CantoForge launches</source>
+        <translation>Mostra la schermata di benvenuto all’avvio di CantoForge</translation>
+    </message>
 </context>
 <context>
     <name>preferences/score</name>
@@ -38658,6 +38743,17 @@ fallita: %2</translation>
         <location filename="../../src/framework/workspace/qml/Muse/Workspace/workspacelistmodel.cpp" line="273"/>
         <source>Name already exists</source>
         <translation>Nome già esistente</translation>
+    </message>
+</context>
+<context>
+    <name>cantoforge/video</name>
+    <message>
+        <source>Video export uses the iPadOS system encoder. No additional installation is required.</source>
+        <translation>L’esportazione video utilizza il codificatore di sistema di iPadOS. Non è necessaria alcuna installazione aggiuntiva.</translation>
+    </message>
+    <message>
+        <source>The system video encoder is unavailable.</source>
+        <translation>Il codificatore video del sistema non è disponibile.</translation>
     </message>
 </context>
 </TS>

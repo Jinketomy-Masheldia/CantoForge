@@ -4,13 +4,15 @@ CantoForge is an unofficial iPadOS port of MuseScore Studio 4.7.5. Public
 releases use the CantoForge name, the maintainer-supplied logo, and
 `com.jmx.cantoforge`. Keep upstream copyrights and component notices intact.
 
-## Current release
+## Prepared beta candidate
 
-The current release is **v0.1.0-alpha.2**, iPad bundle build **19**, marked as a
-**pre-release**. The first release, `v0.1.0-alpha.1`, remains available. The
+The next prepared release is **v0.1.0-beta.1**, iPad bundle build **21**, to be
+marked as a **pre-release** after final maintainer testing. Earlier alpha
+releases remain separate and must not be overwritten or retagged. The
 configured device target is arm64 with iPadOS 17.0 or later. The maintainer
-reports usability on an 11-inch iPad Pro (2022, M2); this is not a complete
-device/feature compatibility audit.
+reports usability and stable system video export on an 11-inch iPad Pro
+(2022, M2) using build 20. Build 21 adds translations and release metadata;
+this is not a complete device/feature compatibility audit.
 
 The iOS AAC backend uses Apple AudioToolbox. FDK-AAC remains in the upstream
 source collection for other platforms but is not linked into the iOS app.
@@ -31,7 +33,12 @@ source collection for other platforms but is not linked into the iOS app.
    credentials, logs and macOS metadata. Do not publish private audit output.
 6. Prepare matching application source with `git archive`. Provide the
    separately installed Qt 6.11.2 Sources component, matching Qt kit build
-   evidence and HarfBuzz 12.3.0 sources. Sources of vendored components and
+   evidence and HarfBuzz 12.3.0 sources. Unchanged dependency materials may be
+   explicitly linked to existing release downloads, with SHA-256 hashes and
+   clear access instructions alongside the binary. Check their accessibility
+   before publication and keep them available while distributing the binary.
+   If a link is unavailable, upload the matching archive directly instead.
+   Sources of vendored components and
    their build definitions remain in the application archive. Do not include
    Apple SDKs, signing credentials or personal build directories.
 7. Record the source commit, bundle revision, build tools/options, dependency
@@ -43,17 +50,25 @@ source collection for other platforms but is not linked into the iOS app.
 
 ## Release assets
 
-- `CantoForge-v0.1.0-alpha.2-iPad-unsigned.ipa`
-- `CantoForge-v0.1.0-alpha.2-source.tar.gz`
+- `CantoForge-v0.1.0-beta.1-iPad-unsigned.ipa`
+- `CantoForge-v0.1.0-beta.1-source.tar.gz`
+- `CantoForge-v0.1.0-beta.1-build-info.json`
+- `DEPENDENCIES.md`: exact links and hashes of the unchanged Qt sources,
+  Qt supplier build evidence and HarfBuzz sources from alpha.1.
+- `SOURCE-MANIFEST.json`, `PACKAGE-AUDIT.json`, `RELEASE-INFO.md`, and `SHA256SUMS`
+
+These eight files include only one IPA. The three unchanged dependency archives
+are prepared separately as fallback attachments:
+
 - `qt-6.11.2-maintenance-tool-source.tar.gz`
 - `qt-6.11.2-ios-build-evidence.tar.gz`
 - `harfbuzz-12.3.0.tar.xz`
-- `CantoForge-v0.1.0-alpha.2-build-info.json`
-- `SOURCE-MANIFEST.json`, `PACKAGE-AUDIT.json`, `RELEASE-INFO.md`, and `SHA256SUMS`
 
 Qt is statically linked. GitHub's automatic repository source ZIP does not
 include Qt or separately downloaded dependency sources. The release assets
-provide the separately prepared materials alongside the application source.
+provide or explicitly link the separately prepared materials alongside the
+application source. Installation requires only the IPA; source and metadata
+files are for building, verification and source availability.
 Qt modules and their third-party components retain their applicable licenses;
 do not describe the complete dependency collection as having a single license.
 

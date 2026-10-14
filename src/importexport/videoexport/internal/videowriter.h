@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include <atomic>
+
 #include "async/asyncable.h"
 
 #include "engraving/style/style.h"
@@ -93,7 +95,8 @@ private:
     bool generateScoreFrames(muse::media::IVideoEncoderPtr encoder, notation::INotationPtr notation, muse::draw::Painter& painter,
                              QImage& frame, const Config& config, float totalPlayTimeSec, int leadingFrameCount, int totalFrameCount);
 
-    bool generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config);
+    bool generateTrailingFrames(muse::media::IVideoEncoderPtr encoder, const Config& config, const QImage& lastFrame);
+    bool encodeFrame(muse::media::IVideoEncoderPtr encoder, const QImage& frame);
 
     struct ScoreRestoreData
     {
@@ -112,12 +115,13 @@ private:
     void restoreScore(notation::INotationPtr notation, const ScoreRestoreData& data);
 
     muse::Progress m_progress;
-    bool m_abort = false;
-    bool m_isCompleted = false;
+    std::atomic<bool> m_abort { false };
+    std::atomic<bool> m_isCompleted { false };
+    std::atomic<bool> m_finalizing { false };
     muse::Ret m_writeRet;
 
     project::INotationWriterPtr m_audioWriter;
-    bool m_audioCompleted = false;
+    std::atomic<bool> m_audioCompleted { false };
     muse::Ret m_audioRet;
 };
 }

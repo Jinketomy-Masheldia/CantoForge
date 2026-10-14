@@ -54,10 +54,12 @@ bill of materials or a completed dependency-license audit.
 
 ## Binary distribution status
 
-The first public release is prepared as **v0.1.0-alpha.1**. Its release
-materials identify the source revision and include the unsigned IPA, matching
-application/dependency source archives, build information, notices and
-checksums. See [docs/releasing.md](docs/releasing.md).
+The next prepared pre-release is **v0.1.0-beta.1**, iPad app build **21**,
+pending final testing and publication. Release materials identify the source
+revision and provide the unsigned IPA, matching application sources, attached
+or explicitly linked dependency sources, build information, notices and
+checksums. Earlier alpha releases remain separate. See
+[docs/releasing.md](docs/releasing.md).
 
 No signing certificate, private signing key, provisioning profile or account
 credential is intended to be part of this repository or a public release.
@@ -68,3 +70,8 @@ The iOS AAC encoder uses Apple AudioToolbox, provided by the operating system.
 FDK-AAC remains in the upstream source tree for other platforms but is not
 compiled or linked into this iOS binary. Release builds can bundle application,
 Qt and dependency notices using `MUE_IOS_INCLUDE_RELEASE_NOTICES=ON`.
+
+The current iOS video backend uses Apple AVFoundation, CoreMedia and CoreVideo,
+provided by the operating system. FFmpeg libraries and the desktop video outro
+are not compiled or embedded in this iOS configuration. Upstream FFmpeg headers
+and desktop implementation sources remain in the repository for other platforms.

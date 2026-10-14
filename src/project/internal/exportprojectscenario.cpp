@@ -98,6 +98,9 @@ RetVal<muse::io::path_t> ExportProjectScenario::askExportPath(const INotationPtr
 bool ExportProjectScenario::exportScores(notation::INotationPtrList notations, const muse::io::path_t destinationPath,
                                          INotationWriter::UnitType unitType, bool openDestinationFolderOnExport) const
 {
+    ++m_exportDepth;
+    DEFER { --m_exportDepth; };
+
     std::string suffix = io::suffix(destinationPath);
     INotationWriterPtr writer = writers()->writer(suffix);
 
