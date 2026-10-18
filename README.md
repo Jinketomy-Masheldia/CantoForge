@@ -20,18 +20,15 @@ mobile application.
 ## Download and install
 
 Download the unsigned IPA from [Releases](https://github.com/Jinketomy-Masheldia/CantoForge/releases).
-The next prepared pre-release is **v0.1.0-beta.1** (iPad app build **21**),
-pending final maintainer testing and publication. Available builds are listed
-on the Releases page; the earlier
-[v0.1.0-alpha.2](https://github.com/Jinketomy-Masheldia/CantoForge/releases/tag/v0.1.0-alpha.2)
-uses app build **19**.
-The port release number is separate from the upstream Studio version and the
-iPad app's bundle build number.
+The **v0.1.0** release uses iPad app build **24**. The port release number is
+separate from the upstream Studio version and the iPad app's bundle build number.
+Earlier alpha and beta releases remain available separately.
 
-The beta candidate adds system MP4 video export and five more languages for
-CantoForge-specific text. It retains finger dragging of selected score elements
-and slur/tie grips, panel scrolling and bottom-edge gesture protection.
-See [the changelog](CHANGELOG.md) for the changes since the first release.
+This release includes fixes for repeated text editing and startup logging,
+readable directories for new document imports, and a native iPadOS printing
+interface. It retains system MP4 video export, finger dragging of selected
+score elements and slur/tie grips, panel scrolling and bottom-edge gesture
+protection. See [the changelog](CHANGELOG.md) for the changes.
 
 Sign and install the IPA using your own compatible sideloading workflow, such
 as SideStore or AltStore. Signing credentials are not included. No App Store
@@ -40,9 +37,9 @@ release is planned at present.
 - App name: **CantoForge**
 - Bundle identifier: **com.jmx.cantoforge**
 - Configured target: **arm64 iPads, iPadOS 17.0 or later**
-- Reported test device: **11-inch iPad Pro (2022, M2)**, with iPadOS 26.6 as
-  reported by its owner. Other devices and OS versions are not established
-  as tested.
+- Reported test device: **11-inch iPad Pro (2022, M2)**, with earlier feedback on iPadOS 26.6 and
+  build 23 crash reports showing iPadOS 27.0.1. The maintainer tested through
+  LiveContainer. Other device/install combinations are not established as tested.
 
 The bundle identifier differs from the older personal development builds.
 CantoForge may install as a separate application. Export or back up scores
@@ -58,7 +55,8 @@ trying this experimental port.
 | Playback | CoreAudio output with bundled MS Basic and FluidR3Mono SoundFonts |
 | Audio export | Apple AudioToolbox AAC-LC/ADTS backend; other retained desktop formats depend on the available exporters |
 | Video export | MP4 with system H.264 encoding and AAC audio; native Mac probe passed and the maintainer reports stable export on the M2 iPad using build 20 |
-| Files integration | Document import, local score storage and file sharing |
+| Printing | Native iPadOS print interface using a PDF snapshot of the current score/part; physical printer output remains unverified |
+| Files integration | Document import with readable filename-based directories for new imports, local score storage and file sharing; existing UUID folders are retained |
 | Touch input | Score panning, tap selection, selected element/grip dragging, panel scrolling, long-press context menus and touch-aware submenus |
 | External mouse and keyboard | Desktop input retained, with an iPad secondary-click bridge |
 | Import/export formats | Core modules retained; every format has not been verified on iPad |
@@ -70,7 +68,7 @@ disabled in the iPad configuration. Cloud save and publishing controls are
 disabled. Experimental MNX import/export is disabled by the build helper.
 Script/QML extensions are retained, but external-process APIs are unavailable.
 
-System video export is included in the beta candidate and is not present in
+System video export is included in v0.1.0 and is not present in
 the earlier `v0.1.0-alpha.2` / build 19 IPA.
 
 Portrait layouts, multitasking, Apple Pencil, accessibility, printing,
@@ -82,8 +80,9 @@ panels; drag a palette symbol horizontally first to move it onto the score.
 
 ## Build from source
 
-Build on macOS with Xcode, CMake, Ninja, matching **Qt 6.11.2 iOS/macOS kits**,
-and **HarfBuzz 12.3.0 sources**. Development used the iPhoneOS 26.5 SDK.
+Build on macOS with Xcode, CMake, Ninja, matching **Qt 6.11.2 iOS/macOS kits**
+and **Qt Sources**, and **HarfBuzz 12.3.0 sources**. Development used the
+iPhoneOS 26.5 SDK. Qt Sources are needed for the build-local iOS text-menu fix.
 
 See [build and installation instructions](docs/ios-port.md).
 The `ipad-port` branch is based on upstream `v4.7.5` commit

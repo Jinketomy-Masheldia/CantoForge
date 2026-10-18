@@ -21,6 +21,8 @@
  */
 #include "graphicsapiprovider.h"
 
+#include <atomic>
+
 #include <QFile>
 #include <QQuickWindow>
 #include <QSGRendererInterface>
@@ -88,20 +90,20 @@ public:
     std::string name() const { return "GraphicsProblemsDetectorLogDest"; }
     void write(const LogMsg& logMsg)
     {
-        if (isProblemDetected) {
+        if (isProblemDetected.load(std::memory_order_relaxed)) {
             return;
         }
 
         for (const std::string& m : BAD_MESSAGES) {
             if (logMsg.message.find(m) != std::string::npos) {
-                isProblemDetected = true;
+                isProblemDetected.store(true, std::memory_order_relaxed);
                 std::cout << "found message: " << m << std::endl;
                 break;
             }
         }
     }
 
-    bool isProblemDetected = false;
+    std::atomic_bool isProblemDetected { false };
 };
 }
 
@@ -115,7 +117,7 @@ GraphicsApiProvider::GraphicsApiProvider(const Version& appVersion)
 
     QObject::connect(&m_timer, &QTimer::timeout, [this]() {
         // fail case
-        if (m_logDest->isProblemDetected) {
+        if (m_logDest->isProblemDetected.load(std::memory_order_relaxed)) {
             if (m_onResult) {
                 m_onResult(false);
             }

@@ -14,6 +14,9 @@ prerequisite for submitting a useful report. Test with copies of scores.
 
 1. Create a small score and enter a few notes.
 2. Edit its title and another text element; tap blank canvas to finish editing.
+   In particular, edit a tempo marking, exit text editing, and immediately edit
+   the same marking again without another action. Repeat and check typing,
+   selection, copy/paste, context menus and both touch and external input.
 3. Undo and redo both notation and text changes.
 4. Save as MSCZ, close, and reopen the saved file.
 5. Copy it to a computer and open it in official desktop Studio. Check notes,
@@ -55,6 +58,20 @@ prerequisite for submitting a useful report. Test with copies of scores.
   interrupted drag must finish cleanly and remain undoable.
 - In note input, check that a drag or long press does not insert an extra note.
 
+### Build 23 crash regression checks
+
+- Repeat the tempo text edit / exit / immediate re-entry sequence described
+  above. Also switch directly to another text element or a dialog field.
+- Verify native text selection, edit/context menus, copy/paste, undo/redo,
+  software keyboard input and external keyboard/mouse input.
+- Repeatedly launch the app and load scores with MS Basic. Check that audio
+  playback and diagnostic logging continue to work.
+- On the Mac, `bash buildscripts/ios/check-logger.sh` checks that removing a
+  logger output waits for its active write, and exercises concurrent output
+  add/remove/clear/write against the actual vendored logger. Use
+  `CANTOFORGE_LOGGER_TSAN=1 bash buildscripts/ios/check-logger.sh` to run the
+  same probe with ThreadSanitizer. These host checks do not validate UIKit UI.
+
 ### System MP4 export (new source)
 
 - Export a short score with a title, a page change and repeats, using both
@@ -70,6 +87,22 @@ prerequisite for submitting a useful report. Test with copies of scores.
   The maintainer additionally reports stable score video export on the M2 iPad
   with build 20; this does not establish compatibility with other devices or
   every score. Build 21 translation/layout and update testing remain pending.
+
+### Native iPad printing (newer source)
+
+- From File > Print, check the system print UI, preview, page count and title
+  for a multi-page score and a part, including Unicode names.
+- Repeat from page, continuous and other score views. Cancelling or completing
+  the dialog must retain the original view and editing state.
+- Check portrait/landscape and custom paper sizes. A transparent PDF export
+  preference must not remove the print page background.
+- Cancel and reopen; press the print shortcut repeatedly while the system UI
+  is open. Only the active job should remain, without stale content or crashes.
+- With an AirPrint printer (or an available Apple Printer Simulator), check
+  discovery, page ranges, copies, paper selection and cancellation/error behavior.
+  Validate actual physical output, margins and duplex separately on real hardware.
+- Until those tests are completed, describe native printing as unverified on
+  devices/printers, rather than claiming that it was tested by compiling alone.
 
 ## Priority 3: additional coverage
 

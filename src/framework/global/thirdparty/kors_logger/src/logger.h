@@ -232,7 +232,7 @@ private:
     Level m_level = Level::Normal;
     std::vector<LogDest*> m_dests;
     std::vector<Type> m_types;
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
 };
 
 //! LogInput ---------------------------------

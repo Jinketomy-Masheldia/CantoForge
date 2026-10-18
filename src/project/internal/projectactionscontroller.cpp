@@ -1923,7 +1923,18 @@ void ProjectActionsController::printScore()
         return;
     }
 
+#ifdef Q_OS_IOS
+    const Ret result = printProvider()->printNotation(notation);
+    if (!result && result.code() != int(Ret::Code::Cancel)) {
+        LOGE() << "Could not start iPad printing: " << result.toString();
+        interactive()->error(trc("cantoforge/print", "Printing"),
+                             result.text().empty()
+                             ? trc("cantoforge/print", "Could not open the system print dialog. You can export a PDF and print it from Files.")
+                             : result.text(), { IInteractive::Button::Ok });
+    }
+#else
     printProvider()->printNotation(notation);
+#endif
 }
 
 async::Promise<io::path_t> ProjectActionsController::selectScoreOpeningFile() const

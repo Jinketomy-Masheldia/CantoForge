@@ -16,3 +16,5 @@ buildscripts/packaging/Windows/PortableApps/**/*.ini eol=crlf
 buildscripts/packaging/Windows/PortableApps/**/*.txt eol=crlf
 buildscripts/packaging/Windows/PortableApps/**/*.ini.in eol=crlf
 buildscripts/packaging/Windows/PortableApps/**/*.html eol=crlf
+# Unified diff context lines intentionally contain a leading space.
+buildscripts/ios/qt-patches/*.patch whitespace=-blank-at-eol

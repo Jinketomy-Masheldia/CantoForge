@@ -4,15 +4,20 @@ CantoForge is an unofficial iPadOS port of MuseScore Studio 4.7.5. Public
 releases use the CantoForge name, the maintainer-supplied logo, and
 `com.jmx.cantoforge`. Keep upstream copyrights and component notices intact.
 
-## Prepared beta candidate
+## Prepared v0.1.0 release
 
-The next prepared release is **v0.1.0-beta.1**, iPad bundle build **21**, to be
-marked as a **pre-release** after final maintainer testing. Earlier alpha
-releases remain separate and must not be overwritten or retagged. The
-configured device target is arm64 with iPadOS 17.0 or later. The maintainer
-reports usability and stable system video export on an 11-inch iPad Pro
-(2022, M2) using build 20. Build 21 adds translations and release metadata;
-this is not a complete device/feature compatibility audit.
+The prepared release is **v0.1.0**, iPad bundle build **24**, to be published as
+an ordinary release (not a pre-release). Earlier alpha/beta releases must remain
+separate and must not be overwritten or retagged. The configured device target
+is arm64 with iPadOS 17.0 or later.
+
+The maintainer tested build 23 on an 11-inch iPad Pro (2022, M2), through
+LiveContainer. Its crash reports show iPadOS 27.0.1. The previously reproducible
+tempo-text edit / exit / immediate re-entry crash and related text/menu/input
+checks passed according to the maintainer. Build 24 packages the same runtime
+changes from the recorded release commit with updated publication metadata.
+Physical AirPrint output remains unverified; this is not a complete
+feature/device/install compatibility audit.
 
 The iOS AAC backend uses Apple AudioToolbox. FDK-AAC remains in the upstream
 source collection for other platforms but is not linked into the iOS app.
@@ -44,15 +49,15 @@ source collection for other platforms but is not linked into the iOS app.
 7. Record the source commit, bundle revision, build tools/options, dependency
    versions and SHA-256 checksums. State the actual scope of device testing.
 8. Upload the unsigned IPA, matching source materials, build/release
-   information and checksums to one GitHub Release. Mark it as a pre-release.
+   information and checksums to one GitHub Release. Publish v0.1.0 as an ordinary release and mark it as the latest release.
 9. Check that the published downloads and recorded source commit are present.
    Keep corresponding source materials accessible while distributing a binary.
 
 ## Release assets
 
-- `CantoForge-v0.1.0-beta.1-iPad-unsigned.ipa`
-- `CantoForge-v0.1.0-beta.1-source.tar.gz`
-- `CantoForge-v0.1.0-beta.1-build-info.json`
+- `CantoForge-v0.1.0-iPad-unsigned.ipa`
+- `CantoForge-v0.1.0-source.tar.gz`
+- `CantoForge-v0.1.0-build-info.json`
 - `DEPENDENCIES.md`: exact links and hashes of the unchanged Qt sources,
   Qt supplier build evidence and HarfBuzz sources from alpha.1.
 - `SOURCE-MANIFEST.json`, `PACKAGE-AUDIT.json`, `RELEASE-INFO.md`, and `SHA256SUMS`
@@ -63,6 +68,12 @@ are prepared separately as fallback attachments:
 - `qt-6.11.2-maintenance-tool-source.tar.gz`
 - `qt-6.11.2-ios-build-evidence.tar.gz`
 - `harfbuzz-12.3.0.tar.xz`
+
+The Qt source and supplier archives contain the unchanged base Qt 6.11.2
+materials. The text-overlay fix is provided in the application source archive
+as `buildscripts/ios/qt-patches/text-menu-lifetime.patch`, with build helpers
+that regenerate the modified platform library locally. Record both the base
+and patched artifact hashes in build information.
 
 Qt is statically linked. GitHub's automatic repository source ZIP does not
 include Qt or separately downloaded dependency sources. The release assets

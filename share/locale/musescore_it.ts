@@ -38756,4 +38756,27 @@ fallita: %2</translation>
         <translation>Il codificatore video del sistema non è disponibile.</translation>
     </message>
 </context>
+<context>
+    <name>cantoforge/print</name>
+    <message>
+        <source>Printing</source>
+        <translation>Stampa</translation>
+    </message>
+    <message>
+        <source>Printing is unavailable on this device. You can export a PDF and print it from Files.</source>
+        <translation>La stampa non è disponibile su questo dispositivo. Puoi esportare un PDF e stamparlo da File.</translation>
+    </message>
+    <message>
+        <source>Could not open the system print dialog. You can export a PDF and print it from Files.</source>
+        <translation>Impossibile aprire la finestra di stampa del sistema. Puoi esportare un PDF e stamparlo da File.</translation>
+    </message>
+    <message>
+        <source>Could not prepare the score for printing. Try exporting it as a PDF.</source>
+        <translation>Impossibile preparare lo spartito per la stampa. Prova a esportarlo in PDF.</translation>
+    </message>
+    <message>
+        <source>Printing failed. Check the printer and connection, or export a PDF and print it from Files.</source>
+        <translation>Stampa non riuscita. Controlla la stampante e la connessione oppure esporta un PDF e stampalo da File.</translation>
+    </message>
+</context>
 </TS>

@@ -25,8 +25,17 @@ target_sources(print PRIVATE
     printmodule.h
     iprintprovider.h
 
-    internal/printprovider.cpp
     internal/printprovider.h
 )
 
-target_link_libraries(print PRIVATE Qt::PrintSupport)
+if (OS_IS_IOS)
+    enable_language(OBJCXX)
+    target_sources(print PRIVATE internal/platform/ios/iosprintprovider.mm)
+    set_source_files_properties(internal/platform/ios/iosprintprovider.mm PROPERTIES
+        COMPILE_OPTIONS "-fobjc-arc" SKIP_PRECOMPILE_HEADERS ON SKIP_UNITY_BUILD_INCLUSION ON)
+    find_library(PRINT_UIKIT_FRAMEWORK NAMES UIKit REQUIRED)
+    target_link_libraries(print PRIVATE ${PRINT_UIKIT_FRAMEWORK})
+else()
+    target_sources(print PRIVATE internal/printprovider.cpp)
+    target_link_libraries(print PRIVATE Qt::PrintSupport)
+endif()

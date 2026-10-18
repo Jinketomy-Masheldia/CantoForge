@@ -38757,4 +38757,27 @@ failed: %2</source>
         <translation>システムの動画エンコーダーを利用できません。</translation>
     </message>
 </context>
+<context>
+    <name>cantoforge/print</name>
+    <message>
+        <source>Printing</source>
+        <translation>印刷</translation>
+    </message>
+    <message>
+        <source>Printing is unavailable on this device. You can export a PDF and print it from Files.</source>
+        <translation>このデバイスでは印刷を利用できません。PDF をエクスポートして「ファイル」から印刷できます。</translation>
+    </message>
+    <message>
+        <source>Could not open the system print dialog. You can export a PDF and print it from Files.</source>
+        <translation>システムの印刷ダイアログを開けませんでした。PDF をエクスポートして「ファイル」から印刷できます。</translation>
+    </message>
+    <message>
+        <source>Could not prepare the score for printing. Try exporting it as a PDF.</source>
+        <translation>印刷用の楽譜を準備できませんでした。PDF としてエクスポートしてみてください。</translation>
+    </message>
+    <message>
+        <source>Printing failed. Check the printer and connection, or export a PDF and print it from Files.</source>
+        <translation>印刷に失敗しました。プリンターと接続を確認するか、PDF をエクスポートして「ファイル」から印刷してください。</translation>
+    </message>
+</context>
 </TS>

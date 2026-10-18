@@ -21,7 +21,7 @@ and license notices in individual files remain in place.
 ## iPadOS modifications
 
 The iPadOS adaptations were developed in October 2026. This publication
-snapshot documents those changes through **2026-10-12**. See [CHANGELOG.md](CHANGELOG.md)
+snapshot documents those changes through **2026-10-18**. See [CHANGELOG.md](CHANGELOG.md)
 for their scope and the repository history for subsequent changes and authors.
 
 This is an unofficial project, maintained separately from MuseScore and
@@ -54,11 +54,10 @@ bill of materials or a completed dependency-license audit.
 
 ## Binary distribution status
 
-The next prepared pre-release is **v0.1.0-beta.1**, iPad app build **21**,
-pending final testing and publication. Release materials identify the source
-revision and provide the unsigned IPA, matching application sources, attached
-or explicitly linked dependency sources, build information, notices and
-checksums. Earlier alpha releases remain separate. See
+The **v0.1.0** release is prepared with iPad app build **24**. Release materials
+identify the source revision and provide the unsigned IPA, matching application
+sources, attached or explicitly linked dependency sources, build information,
+notices and checksums. Earlier alpha and beta releases remain separate. See
 [docs/releasing.md](docs/releasing.md).
 
 No signing certificate, private signing key, provisioning profile or account
@@ -75,3 +74,10 @@ The current iOS video backend uses Apple AVFoundation, CoreMedia and CoreVideo,
 provided by the operating system. FFmpeg libraries and the desktop video outro
 are not compiled or embedded in this iOS configuration. Upstream FFmpeg headers
 and desktop implementation sources remain in the repository for other platforms.
+
+The iOS build applies a project-maintained text-menu lifetime patch to Qt's
+platform plugin. The patch and reproducible build helpers are included under
+`buildscripts/ios/qt-patches` and `buildscripts/packaging/iOS`. Combine these with
+the matching Qt source archive to build the modified platform code. Original
+Qt licensing and copyright headers are preserved; the installed Qt kit is not
+modified by this build process.

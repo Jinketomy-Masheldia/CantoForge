@@ -38758,4 +38758,27 @@ a échoué : %2</translation>
         <translation>L’encodeur vidéo du système n’est pas disponible.</translation>
     </message>
 </context>
+<context>
+    <name>cantoforge/print</name>
+    <message>
+        <source>Printing</source>
+        <translation>Impression</translation>
+    </message>
+    <message>
+        <source>Printing is unavailable on this device. You can export a PDF and print it from Files.</source>
+        <translation>L’impression n’est pas disponible sur cet appareil. Vous pouvez exporter un PDF et l’imprimer depuis Fichiers.</translation>
+    </message>
+    <message>
+        <source>Could not open the system print dialog. You can export a PDF and print it from Files.</source>
+        <translation>Impossible d’ouvrir la boîte de dialogue d’impression du système. Vous pouvez exporter un PDF et l’imprimer depuis Fichiers.</translation>
+    </message>
+    <message>
+        <source>Could not prepare the score for printing. Try exporting it as a PDF.</source>
+        <translation>Impossible de préparer la partition pour l’impression. Essayez de l’exporter au format PDF.</translation>
+    </message>
+    <message>
+        <source>Printing failed. Check the printer and connection, or export a PDF and print it from Files.</source>
+        <translation>L’impression a échoué. Vérifiez l’imprimante et la connexion, ou exportez un PDF et imprimez-le depuis Fichiers.</translation>
+    </message>
+</context>
 </TS>

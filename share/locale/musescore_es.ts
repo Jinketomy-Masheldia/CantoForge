@@ -38769,4 +38769,27 @@ Si tiene cambios sin guardar, se le pedirá guardarlos antes de que MuseScore St
         <translation>El codificador de vídeo del sistema no está disponible.</translation>
     </message>
 </context>
+<context>
+    <name>cantoforge/print</name>
+    <message>
+        <source>Printing</source>
+        <translation>Impresión</translation>
+    </message>
+    <message>
+        <source>Printing is unavailable on this device. You can export a PDF and print it from Files.</source>
+        <translation>La impresión no está disponible en este dispositivo. Puedes exportar un PDF e imprimirlo desde Archivos.</translation>
+    </message>
+    <message>
+        <source>Could not open the system print dialog. You can export a PDF and print it from Files.</source>
+        <translation>No se pudo abrir el diálogo de impresión del sistema. Puedes exportar un PDF e imprimirlo desde Archivos.</translation>
+    </message>
+    <message>
+        <source>Could not prepare the score for printing. Try exporting it as a PDF.</source>
+        <translation>No se pudo preparar la partitura para imprimirla. Prueba a exportarla como PDF.</translation>
+    </message>
+    <message>
+        <source>Printing failed. Check the printer and connection, or export a PDF and print it from Files.</source>
+        <translation>La impresión ha fallado. Comprueba la impresora y la conexión, o exporta un PDF e imprímelo desde Archivos.</translation>
+    </message>
+</context>
 </TS>

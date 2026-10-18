@@ -26,10 +26,20 @@
 #include "global/modularity/ioc.h"
 #include "ui/imainwindow.h"
 
+#ifdef Q_OS_IOS
+#include "iinteractive.h"
+#include "project/inotationwritersregister.h"
+#endif
+
 namespace mu::print {
-class PrintProvider : public IPrintProvider, public muse::Contextable
+class PrintProvider : public IPrintProvider, public muse::Contextable, public std::enable_shared_from_this<PrintProvider>
 {
     muse::ContextInject<muse::ui::IMainWindow> mainWindow{ this };
+#ifdef Q_OS_IOS
+    muse::ContextInject<muse::IInteractive> interactive{ this };
+    muse::ContextInject<project::INotationWritersRegister> writers{ this };
+    bool m_isPrinting = false;
+#endif
 
 public:
     explicit PrintProvider(const muse::modularity::ContextPtr&);

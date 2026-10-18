@@ -26,6 +26,8 @@ def copy(source, relative):
 
 for name in ('LICENSE.txt', 'NOTICE.md', 'README.md'):
     copy(args.project / name, Path('application') / name)
+for name in ('README.md', 'text-menu-lifetime.patch'):
+    copy(args.project / 'buildscripts/ios/qt-patches' / name, Path('qt/cantoforge-patches') / name)
 notices = re.compile(r'(license|licence|copying|copyright|notice|authors|attribution)', re.I)
 for folder in ('src', 'thirdparty', 'fonts', 'share/sound'):
     for source in (args.project / folder).rglob('*'):

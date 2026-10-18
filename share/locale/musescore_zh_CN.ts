@@ -38764,4 +38764,27 @@ failed: %2</source>
         <translation>系统视频编码器不可用。</translation>
     </message>
 </context>
+<context>
+    <name>cantoforge/print</name>
+    <message>
+        <source>Printing</source>
+        <translation>打印</translation>
+    </message>
+    <message>
+        <source>Printing is unavailable on this device. You can export a PDF and print it from Files.</source>
+        <translation>此设备无法使用打印功能。你可以导出 PDF，然后从“文件”中打印。</translation>
+    </message>
+    <message>
+        <source>Could not open the system print dialog. You can export a PDF and print it from Files.</source>
+        <translation>无法打开系统打印对话框。你可以导出 PDF，然后从“文件”中打印。</translation>
+    </message>
+    <message>
+        <source>Could not prepare the score for printing. Try exporting it as a PDF.</source>
+        <translation>无法准备待打印的乐谱。请尝试将其导出为 PDF。</translation>
+    </message>
+    <message>
+        <source>Printing failed. Check the printer and connection, or export a PDF and print it from Files.</source>
+        <translation>打印失败。请检查打印机和连接，或导出 PDF 后从“文件”中打印。</translation>
+    </message>
+</context>
 </TS>

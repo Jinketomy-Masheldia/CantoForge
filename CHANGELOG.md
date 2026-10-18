@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.1.0 — 2026-10-18
+
+- Patched Qt's iOS text overlay to invalidate obsolete tap-menu callbacks and
+  check native/Qt window and focus lifetimes. Native editing menus, keyboard
+  input and selection handles remain enabled. The patch is built locally from
+  matching Qt Sources without modifying the installed Qt kit.
+- Synchronized logger output registration, removal and clearing with in-flight
+  writes; made the graphics detector's cross-thread result flag atomic. This
+  addresses a concrete startup race consistent with the build 22 logging crash.
+- New external imports use readable filename-based directories, adding `(2)`,
+  `(3)`, etc. on collisions. Existing UUID folders are not migrated.
+- The maintainer reports that build 23 passed the previously reproducible tempo
+  text edit / exit / immediate re-entry sequence and related text/menu/input
+  checks on the M2 iPad through LiveContainer. Build 24 packages the same runtime
+  changes from the recorded release commit, with updated publication metadata.
+
+### Native iPad printing
+
+- Routed File > Print on iPad through the system AirPrint interface instead of
+  the desktop Qt print dialog. It prints a PDF snapshot of the current score/part
+  using the existing PDF exporter, retaining paper dimensions and orientation.
+- Restored the original score view before presenting system UI. Print data stays
+  in memory and is released after completion/cancellation; no temporary document
+  is left in Files. Repeated print commands do not replace an active print job.
+- Added printing errors and PDF/Files fallback guidance, translated for the
+  same locales as other CantoForge-specific text.
+- Native dialog behavior and physical printer output still require device/printer
+  testing. Printing is included in v0.1.0; it was not in beta.1/build 21.
+
 ## v0.1.0-beta.1 — prepared for testing, 2026-10-14
 
 - Enabled MP4 score video export on iPad using Apple AVFoundation for H.264

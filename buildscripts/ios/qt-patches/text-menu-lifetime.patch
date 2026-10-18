@@ -1,0 +1,117 @@
+--- a/qiostextinputoverlay.mm
++++ b/qiostextinputoverlay.mm
+@@ -8,6 +8,7 @@
+ #include <QtGui/QGuiApplication>
+ #include <QtGui/QInputMethod>
+ #include <QtGui/QStyleHints>
++#include <QtCore/QPointer>
+ 
+ #include <QtGui/private/qinputmethod_p.h>
+ #include <QtCore/private/qobject_p.h>
+@@ -142,13 +143,23 @@
+ {
+     const bool mouseTriggered = false;
+     const Qt::KeyboardModifiers keyboardModifiers = Qt::NoModifier;
+-    QWindow *qtWindow = quiview_cast(focusView).platformWindow->window();
++    if (!qGuiApp || !focusView || !focusView.window)
++        return;
++    QIOSWindow *platformWindow = quiview_cast(focusView).platformWindow;
++    if (!platformWindow)
++        return;
++    const QPointer<QWindow> qtWindow = platformWindow->window();
++    const QPointer<QObject> focusObject = qGuiApp->focusObject();
++    if (!qtWindow || !focusObject || qGuiApp->focusWindow() != qtWindow)
++        return;
+     const auto globalTouchPos = qtWindow->mapToGlobal(touchPos);
+     const bool contextMenuEventAccepted = QWindowSystemInterface::handleContextMenuEvent<
+         QWindowSystemInterface::SynchronousDelivery>(qtWindow, mouseTriggered, touchPos,
+                                                      globalTouchPos, keyboardModifiers);
+ 
+-    if (!contextMenuEventAccepted) {
++    if (!contextMenuEventAccepted && qtWindow && focusObject
++        && qGuiApp->focusWindow() == qtWindow && qGuiApp->focusObject() == focusObject
++        && focusView.window && quiview_cast(focusView).platformWindow == qtWindow->handle()) {
+         // Fall back to show the default platform menu, like we did
+         // before we started sending context menu events. This is
+         // to be backwards compatible with Widgets and Quick items.
+@@ -894,6 +905,7 @@
+ @implementation QIOSTapRecognizer {
+     int _cursorPosOnPress;
+     bool _menuShouldBeVisible;
++    NSUInteger _menuRequestGeneration;
+     UIView *_focusView;
+ }
+ 
+@@ -911,10 +923,17 @@
+     if (enabled == self.enabled)
+         return;
+ 
++    QWindow *focusWindow = enabled && qGuiApp ? qGuiApp->focusWindow() : nullptr;
++    if (enabled && !focusWindow)
++        return;
++
++    // A queued menu request belongs to the old focus session.
++    ++_menuRequestGeneration;
++    _menuShouldBeVisible = false;
+     [super setEnabled:enabled];
+ 
+     if (enabled) {
+-        _focusView = [reinterpret_cast<UIView *>(qApp->focusWindow()->winId()) retain];
++        _focusView = [reinterpret_cast<UIView *>(focusWindow->winId()) retain];
+         [_focusView addGestureRecognizer:self];
+     } else {
+         [_focusView removeGestureRecognizer:self];
+@@ -925,6 +944,8 @@
+ 
+ - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+ {
++    ++_menuRequestGeneration;
++    _menuShouldBeVisible = false;
+     [super touchesBegan:touches withEvent:event];
+ 
+     QRectF inputRect = QPlatformInputContext::inputItemClipRectangle();
+@@ -966,8 +987,19 @@
+     _cursorPosOnPress = QInputMethod::queryFocusObject(Qt::ImCursorPosition, QVariant()).toInt();
+ }
+ 
++- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
++{
++    ++_menuRequestGeneration;
++    _menuShouldBeVisible = false;
++    [super touchesCancelled:touches withEvent:event];
++}
++
+ - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+ {
++    if (!self.enabled || !_focusView || !qGuiApp) {
++        [super touchesEnded:touches withEvent:event];
++        return;
++    }
+     if (QIOSTextInputOverlay::s_editMenu.visible) {
+         _menuShouldBeVisible = false;
+     } else {
+@@ -982,10 +1014,23 @@
+             // have reached another UI control we report the gesture as failed
+             // here, and then manually show the menu at the next runloop pass.
+             _menuShouldBeVisible = true;
++            const NSUInteger generation = ++_menuRequestGeneration;
++            UIView *focusView = _focusView; // Retained when the block is copied.
++            const QPointer<QWindow> focusWindow = qGuiApp->focusWindow();
++            const QPointer<QObject> focusObject = qGuiApp->focusObject();
+             self.state = UIGestureRecognizerStateFailed;
+             dispatch_async(dispatch_get_main_queue(), ^{
++                // Focus can change while Qt handles the same touch release.
++                // Ignore stale requests instead of touching a detached view or
++                // hiding a newer editor's menu.
++                if (!self.enabled || generation != _menuRequestGeneration
++                    || !qGuiApp || !focusWindow || !focusObject
++                    || _focusView != focusView || !focusView.window
++                    || qGuiApp->focusWindow() != focusWindow
++                    || qGuiApp->focusObject() != focusObject)
++                    return;
+                 if (_menuShouldBeVisible)
+-                    showEditMenu(_focusView, touchPos.toPoint());
++                    showEditMenu(focusView, touchPos.toPoint());
+                 else
+                     QIOSTextInputOverlay::s_editMenu.visible = false;
+             });

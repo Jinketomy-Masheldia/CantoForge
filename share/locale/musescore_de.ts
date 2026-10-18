@@ -38761,4 +38761,27 @@ musikalische Symbole</translation>
         <translation>Der Videoencoder des Systems ist nicht verfügbar.</translation>
     </message>
 </context>
+<context>
+    <name>cantoforge/print</name>
+    <message>
+        <source>Printing</source>
+        <translation>Drucken</translation>
+    </message>
+    <message>
+        <source>Printing is unavailable on this device. You can export a PDF and print it from Files.</source>
+        <translation>Auf diesem Gerät ist das Drucken nicht verfügbar. Sie können eine PDF-Datei exportieren und über die App „Dateien“ drucken.</translation>
+    </message>
+    <message>
+        <source>Could not open the system print dialog. You can export a PDF and print it from Files.</source>
+        <translation>Der Druckdialog des Systems konnte nicht geöffnet werden. Sie können eine PDF-Datei exportieren und über die App „Dateien“ drucken.</translation>
+    </message>
+    <message>
+        <source>Could not prepare the score for printing. Try exporting it as a PDF.</source>
+        <translation>Die Partitur konnte nicht zum Drucken vorbereitet werden. Versuchen Sie, sie als PDF-Datei zu exportieren.</translation>
+    </message>
+    <message>
+        <source>Printing failed. Check the printer and connection, or export a PDF and print it from Files.</source>
+        <translation>Drucken fehlgeschlagen. Prüfen Sie den Drucker und die Verbindung oder exportieren Sie eine PDF-Datei und drucken Sie diese über die App „Dateien“.</translation>
+    </message>
+</context>
 </TS>

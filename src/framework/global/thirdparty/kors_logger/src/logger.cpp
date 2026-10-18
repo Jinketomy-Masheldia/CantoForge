@@ -388,21 +388,26 @@ bool Logger::isType(const Type& type) const
 void Logger::addDest(LogDest* dest)
 {
     assert(dest);
+    std::lock_guard locker(m_mutex);
     m_dests.push_back(dest);
 }
 
 void Logger::removeDest(LogDest* dest)
 {
+    // Wait for in-flight writes before allowing the caller to destroy dest.
+    std::lock_guard locker(m_mutex);
     m_dests.erase(std::remove(m_dests.begin(), m_dests.end(), dest), m_dests.end());
 }
 
 std::vector<LogDest*> Logger::dests() const
 {
+    std::lock_guard locker(m_mutex);
     return m_dests;
 }
 
 void Logger::clearDests()
 {
+    std::lock_guard locker(m_mutex);
     for (LogDest* d : m_dests) {
         delete d;
     }
